@@ -71,10 +71,3 @@
 ;; (gost-obozn-type "/home/namatv/ftp/vsegost.com/Catalog/69/6976.shtml")
 ;; (setq massa t)
 
-(defun walk-vsegost()
-  (load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/directory.lsp")
-  (load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/open_file.lsp")
-  (setq massa (open "/tmp/gost-rez.txt" :direction :output))
-  (walk-directory "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog" #'gost-obozn-type)
-  (close massa)
-)
