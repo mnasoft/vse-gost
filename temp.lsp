@@ -57,9 +57,14 @@
   (setq str_rez "")
   (if (null str_type) (return nil))
   (cond
-    ( (= 1 (length str_name))
-      (setq str_rez (string-concat str_directory "0" str_name "." str_type)))
-    ( (<= 2 (length str_name))
+    ( (<= (length str_name) 6 )
+      (setq 
+        str_rez 
+        (string-concat 
+          str_directory 
+          (make-string (- 6 (length str_name)) :initial-element  #\0)
+          str_name "." str_type)))
+    ( (> (length str_name) 6)
       (setq str_rez (string-concat str_directory str_name "." str_type)))
   )
   (pathname str_rez)
@@ -76,19 +81,9 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
     str_directory (directory-namestring str_path))
 )
 
-(defun walk-vsegost()
-  "Прогулка по всем файлам сайта vsegost.com"
-  (setq massa (open "/tmp/gost-rez.txt" :direction :output))
-  (walk-directory 
-    "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog" 
-    (function gost-obozn-type))
-  (close massa)
-)
-
 (defun trim-directory-from-tail(input_path find_directory)
 "Возвращает путь, отсекая от пути input_path все каталоги начиная с конца пока не встретится подкаталог с именем find_directory."
   (setq dir_str_list (reverse (pathname-directory input_path)))
-
   (setq if_vsegost_find nil )
   (mapcar
     (function
