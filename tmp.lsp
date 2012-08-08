@@ -7,16 +7,12 @@
     ( (str_list (path-name-type str_path))
       (str_name (car str_list))
       (str_type (cadr str_list))
-      (str_directory (caddr str_list))
-    )
+      (str_directory (caddr str_list)))
     (cond
       ( str_type 
-        (format t "~a~a.~a~%" str_directory str_name str_type ))
+        (format t "~a~a.~a~%" str_directory str_name str_type))
       ( (null str_type)
-        (format t "~a~a~%" str_directory str_name ))
-    )
-  )
-)
+        (format t "~a~a~%" str_directory str_name )))))
 
 (defun directory-list>directory-string (dlist)
 "Выполняет сборку пути к каталогу, основываясь на результате вывода функции pathname-directory."
@@ -31,11 +27,8 @@
             ( (equal (quote SIMPLE-BASE-STRING) (car (type-of el)))
               (setq str_rez (string-concat str_rez el "/")))
             ( T (format t "~a~%" (type-of el))))))
-      dlist
-    )
-    str_rez
-  )
-)
+      dlist)
+    str_rez))
 
 (defun pth-name-shtml (str_path)
 "По имени shtml файла выполняет поиск каталога в, котором находятся gif файлы, предназначенные для переименования"
@@ -43,54 +36,40 @@
     ( (str_list (path-name-type str_path))
       (str_name (car str_list))
       (str_type (cadr str_list))
-      (str_directory (caddr str_list))
-      (str_rez "")
-    )
-    (setq str_directory (trim-directory-from-tail str_directory "vsegost.com"))
+      (str_directory (trim-directory-from-tail (caddr str_list) "vsegost.com"))
+      (str_rez ""))
     (cond
-      ( (equal str_type "shtml") )
+      ( (not (equal str_type "shtml")))
       ( (= 1 (length str_name))
         (setq str_rez (string-concat str_directory "./Data/0/" str_name "/")))
       ( (= 2 (length str_name))
         (setq str_rez (string-concat str_directory "./Data/0/" str_name "/")))
       ( (= 3 (length str_name))
-        (setq str_rez (string-concat str_directory "./Data/" (substring str_name 0 1) "/" str_name "/"))
-      )
+        (setq str_rez (string-concat str_directory "./Data/" (substring str_name 0 1) "/" str_name "/")))
       ( (= 4 (length str_name))
-        (setq str_rez (string-concat str_directory "./Data/" (substring str_name 0 2) "/" str_name "/"))
-      )
+        (setq str_rez (string-concat str_directory "./Data/" (substring str_name 0 2) "/" str_name "/")))
       ( (= 5 (length str_name))
-        (setq str_rez (string-concat str_directory "./Data/" (substring str_name 0 3) "/" str_name "/"))
-      )
-    )
-    str_rez
-  )
-)
+        (setq str_rez (string-concat str_directory "./Data/" (substring str_name 0 3) "/" str_name "/"))))
+    str_rez))
 
 (defun rename-gif-file(str_path)
 "Возвращает преобразованное имя файла, задаваемого в переменной str_path.
 Преобразование заключается в том, что при длине имени в один символ имя предварялось символом 0.
 Например: #P\"X.gif\" -> #P\"0X.gif\""
   (let 
-    (
-      (str_rez "")
+    ( (str_rez "")
       (str_name (pathname-name str_path))
       (str_type (pathname-type str_path))
       (str_directory (directory-namestring str_path)))
     (if (null str_type) (setq str_type ""))
-    (cond
-      ( (<= (length str_name) 6 )
-        (setq 
-          str_rez 
-          (string-concat 
-            str_directory 
-            (make-string (- 6 (length str_name)) :initial-element  #\0)
-            str_name "." str_type)))
-      ( (> (length str_name) 6)
-        (setq str_rez (string-concat str_directory str_name "." str_type)))
-    )
-    (pathname str_rez))
-)
+    (setq 
+      str_rez
+      (cond
+        ( (<= (length str_name) 6 )
+            (string-concat str_directory (make-string (- 6 (length str_name)) :initial-element  #\0) str_name "." str_type))
+        ( (> (length str_name) 6)
+          (string-concat str_directory str_name "." str_type))))
+    (pathname str_rez)))
 
 (defun path-name-type(str_path)
 "Разбивает полное имя файла на: str_name - имя файла; str_type - расширение файла; str_directory - путь.
@@ -98,22 +77,17 @@
 Например: (path-name-type \"/usr/local/name.ext\") -> \"/usr/local/\"
 str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
   (let 
-    (
-      (str_name (pathname-name str_path))
+    ( (str_name (pathname-name str_path))
       (str_type (pathname-type str_path))
       (str_directory (directory-namestring str_path)))
-      (list str_name str_type str_directory)
-   )
-)
+    (list str_name str_type str_directory)))
 
 (defun trim-directory-from-tail(input_path find_directory)
 "Возвращает путь, отсекая от пути input_path все каталоги начиная с конца
 пока не встретится подкаталог с именем find_directory."
   (let
-    (
-      (dir_str_list (reverse (pathname-directory input_path)))
-      (if_vsegost_find nil)
-    )
+    ( (dir_str_list (reverse (pathname-directory input_path)))
+      (if_vsegost_find nil))
     (mapcar
       (function
         (lambda (el)
@@ -122,10 +96,8 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
             ( (string= el find_directory) (setq if_vsegost_find T) T)
             ( (or (eq el :ABSOLUTE) (eq el :RELATIVE)))
             ( T (setq dir_str_list (cdr dir_str_list)) T))))
-      dir_str_list
-    )
-    (directory-list>directory-string (reverse dir_str_list)))
-)
+      dir_str_list)
+    (directory-list>directory-string (reverse dir_str_list))))
 
 (defun map_shtml_file(file_shtml)
 "Для каждого shtml файла выполняет:
@@ -137,49 +109,43 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
 "
   (let 
     ( (gif_file_from_to_list
-      (sort
-        (mapcar
-          (function
-            (lambda (el)
-                (list el (rename-gif-file el))
-            )
-          ) ;; Создаём список, содержащий пары имен файлов типа gif для переименования.
-          (directory
-            (string-concat
-              (pth-name-shtml file_shtml)
-              "*.gif")) ;; Поиск файлов с расширением gif. 
-        )
-        (function (lambda (el1 el2  )(string< (namestring (cadr el1))(namestring (cadr el2))))))));; Сортируем список.
-    (mapcar 
+        (sort ;; Сортируем список файлов с расширением gif.
+          (mapcar
+            (function
+              (lambda (el) ;; Создаём список, содержащий пары имен файлов типа gif для переименования.
+                  (list el (rename-gif-file el))))
+            (directory
+              (string-concat ;; Поиск файлов с расширением gif. 
+                (pth-name-shtml file_shtml)
+                "*.gif"))) 
+          (function (lambda (el1 el2  )(string< (namestring (cadr el1))(namestring (cadr el2))))))))
+    (mapcar ;; Выполняем прямое переименование.
       (function
         (lambda (el)
           (let 
             ( (car_el (car el)) (cadr_el (cadr el)))
             (if (string/= (namestring car_el) (namestring cadr_el))
               (rename-file car_el cadr_el)))))
-      gif_file_from_to_list) ;; Выполняем прямое переименование.
-    (format t "~a~%" file_shtml)
+      gif_file_from_to_list) 
+    (format t "~a~%" file_shtml) ;;Информационный вывод.
     (if gif_file_from_to_list
       (EXT:EXECUTE "/usr/bin/convert" 
         (string-concat (directory-namestring (cadr (car gif_file_from_to_list))) "*.gif") 
         (string-concat (directory-namestring (cadr (car gif_file_from_to_list))) "gost.pdf")))
-    (mapcar 
+    (mapcar ;; Выполняем обратное переименование.
       (function
         (lambda (el)
           (let ((car_el (car el)) (cadr_el (cadr el)))
             (if (string/= (namestring car_el) (namestring cadr_el))
               (rename-file cadr_el car_el)))))
-      gif_file_from_to_list) ;; Выполняем обратное переименование.
-  )
-)
+      gif_file_from_to_list)))
 
 (defun pth-Catalog->Data(str_catalog)
   (let 
     ((catalog_shtml_files (directory str_catalog)))
-    (mapcar (function map_shtml_file) catalog_shtml_files))
-)
+    (mapcar (function map_shtml_file) catalog_shtml_files)))
 
-(mapcar
+(mapcar ;; Компиляция функций
   (function
     (lambda (el) (compile el)))
     '(pth-name-format 
