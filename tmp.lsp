@@ -1,6 +1,8 @@
 (load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/directory.lsp")
 (load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/open_file.lsp")
 
+(defvar *catalog-namber* 0)
+
 (defun pth-name-format (str_path)
 "Выводит на печать переменные, определенные в функции path-name-type."
   (let*
@@ -126,8 +128,9 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
             ( (car_el (car el)) (cadr_el (cadr el)))
             (if (string/= (namestring car_el) (namestring cadr_el))
               (rename-file car_el cadr_el)))))
-      gif_file_from_to_list) 
-    (format t "~a~%" file_shtml) ;;Информационный вывод.
+      gif_file_from_to_list)
+    (setq *catalog-namber* (1+ *catalog-namber*))
+    (format t "~a       ~a~%" *catalog-namber* file_shtml) ;;Информационный вывод.
     (if gif_file_from_to_list
       (EXT:EXECUTE "/usr/bin/convert" 
         (string-concat (directory-namestring (cadr (car gif_file_from_to_list))) "*.gif") 
