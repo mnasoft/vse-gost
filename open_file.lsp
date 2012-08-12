@@ -2,29 +2,31 @@
 
 (defun walk-vsegost()
 "Прогулка по всем файлам сайта vsegost.com"
-  (let
-    (
-      (output_file (open "/tmp/gost-rez.txt" :direction :output))
+  (let*
+    ( (output_file (open "/tmp/gost-rez.txt" :direction :output))
+      (rez
+        (mapcar 
+          (function 
+            (lambda (el)
+              (gost-obozn-type el output_file)))
+          (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml"))
+      )
     )
-    (walk-directory 
-      "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog" 
-      (function gost-obozn-type))
     (close output_file)
-  )
-)
+    rez))
 
-(defun gost-obozn-type(gost_path)
+(defun gost-obozn-type(gost_path &optional out_txt_file)
 ""
   (let
     (
       (in_shtml_file (open gost_path :direction :input))
-      (out_txt_file t)
       (in_shtml_file_eof-error-p nil)
       (atag "h1")
       (str "")
       (str-h1 "")
       (str-h2 "")
     )
+    (setq out_txt_file (if (null out_txt_file) t out_txt_file))
     (loop until in_shtml_file_eof-error-p do
       (setq str (read-line in_shtml_file in_shtml_file_eof-error-p))
       (if (or (not str) in_shtml_file_eof-error-p) 
