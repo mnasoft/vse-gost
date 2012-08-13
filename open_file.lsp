@@ -4,6 +4,7 @@
 "Прогулка по всем файлам сайта vsegost.com"
   (let*
     ( (output_file (open "/tmp/gost-rez.txt" :direction :output))
+      (output_html_file (open "/tmp/gost-rez.html" :direction :output))
       (rez
         (mapcar 
           (function 
@@ -13,7 +14,15 @@
       )
     )
     (close output_file)
-    rez))
+    (setq 
+      rez
+      (sort rez 
+        (function 
+          (lambda (el1 el2  )
+            (string< (string-trim " "(caddr el1)) (string-trim " "(caddr el2)))))))
+    (mapcar (function(lambda(el) (format output_html_file "~a~%" el)))rez)
+    (close output_html_file)
+    ))
 
 (defun gost-obozn-type(gost_path &optional out_txt_file)
 ""
