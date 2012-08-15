@@ -101,6 +101,24 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
       dir_str_list)
     (directory-list>directory-string (reverse dir_str_list))))
 
+(defun trim-directory-from-head(input_path find_directory)
+"Возвращает путь, отсекая от пути input_path все каталоги начиная с начала
+пока не встретится подкаталог с именем find_directory."
+  (let
+    ( (dir_str_list (reverse (pathname-directory input_path)))
+      (if_vsegost_find nil)
+      (dir_str_list_rez nil))
+    (mapcar
+      (function
+        (lambda (el)
+          (cond
+            ( if_vsegost_find T)
+            ( (string= el find_directory) (setq if_vsegost_find T) T)
+            ( (or (eq el :ABSOLUTE) (eq el :RELATIVE)))
+            ( T (setq dir_str_list_rez (cons el dir_str_list_rez)) T))))
+      dir_str_list)
+    (directory-list>directory-string dir_str_list_rez)))
+
 (defun map_shtml_file(file_shtml)
 "Для каждого shtml файла выполняет:
 1 Поиск имен файлов с расширением gif в подходящем каталоге;
