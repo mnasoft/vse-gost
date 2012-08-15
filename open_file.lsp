@@ -1,31 +1,84 @@
-(defvar str_rez "")
+;; (defparameter *html-vsegost* (walk-vsegost #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml"))
+;; (create-html-vsegost *html-vsegost*)
 
-(defun walk-vsegost()
+;; (clear-var-list '(s_tag e_tag str_l s_tag_l e_tag_l tag_start tag_end str_rez))
+
+;; (gost-obozn-type "/home/namatv/ftp/vsegost.com/Catalog/69/6976.shtml")
+;; (gost-obozn-type "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/69/6976.shtml")
+
+(defvar str_rez "")
+(defparameter *latin-looks-like-cirillic* "ABCEHKMOPTXaceopxy")
+(defparameter *cirillic-looks-like-latin* "АВСЕНКМОРТХасеорху")
+
+(defun create-html-vsegost(rez)
+  (let 
+    ( (output_html_file (open "/tmp/index.php" :direction :output)))
+    (format output_html_file "<html>~%")
+    (format output_html_file "<head>~%")
+    (format output_html_file "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />~%")
+    (format output_html_file "<title>MNAsoft.ГОСТ</title>~%")
+    (format output_html_file "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://mnasoft.mksat.net/mnasoft_style.css\" />~%")
+    (format output_html_file "<meta name=\"keywords\" content=\"MNASoft,ГОСТ\"/>~%")
+    (format output_html_file "<meta name=\"author\" content=\"Николай Матвеев\"/>~%")
+    (format output_html_file "<body>~%")
+    (php-page-counter output_html_file)
+    (format output_html_file "<table border='2' cols='2'>~%")
+    (format output_html_file "<caption>Перечень ГОСТ по наименованию</caption>~%")
+    (format output_html_file "<tbody>~%")
+    (format output_html_file "<tr><th>~A</th><th>~A</th></tr>~%" "Обозначение" "Наименование")
+    (mapcar 
+      (function
+        (lambda(el)
+          (let*
+            ( (n-tp-p (path-name-type (car el)))
+              (n (car n-tp-p))
+              (tp (cadr n-tp-p))
+              (p (caddr n-tp-p)))
+            (setq p (concatenate 'string "http://www.vsegost.com/" (trim-directory-from-head p "vsegost.com")))
+            (format output_html_file "<tr>")
+            (format output_html_file "<td><a href=\"~A~A.~A\">~A</a></td>" p n tp (cadr el))
+            (format output_html_file "<td>~A</td></tr>" (caddr el))
+            (format output_html_file "</tr>~%")
+          )))
+    rez)
+    (format output_html_file "</tbody>~%")
+    (format output_html_file "</table>~%")
+    (format output_html_file "</body>~%")
+    (format output_html_file "</html>~%")
+    (close output_html_file)
+  )
+)
+
+(defun php-page-counter(output_html_file)
+  (format output_html_file "<?php ~%")
+  (format output_html_file "$inc_path=\"/var/www/virtual/mnasoft.mksat.net/htdocs/php/includes\"; ~%")
+  (format output_html_file "set_include_path($inc_path); ~%")
+  (format output_html_file "include \"counter.php\"; ~%")
+  (format output_html_file "?> ~%"))
+
+(defun walk-vsegost(path-to-shtml-files)
 "Прогулка по всем файлам сайта vsegost.com"
   (let*
-    ( (output_file (open "/tmp/gost-rez.txt" :direction :output))
-      (output_html_file (open "/tmp/gost-rez.html" :direction :output))
-      (rez
+    ( (rez
         (mapcar 
           (function 
             (lambda (el)
-              (gost-obozn-type el output_file)))
-          (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml"))
-      )
-    )
-    (close output_file)
-    (setq 
+              (gost-obozn-type el)))
+          (directory path-to-shtml-files))))
+    (setq
       rez
-      (sort rez 
-        (function 
+      (sort rez
+        (function
           (lambda (el1 el2  )
-            (string< (string-trim " "(caddr el1)) (string-trim " "(caddr el2)))))))
-    (mapcar (function(lambda(el) (format output_html_file "~a~%" el)))rez)
-    (close output_html_file)
-    ))
+            (string< (caddr el1) (caddr el2))))))))
 
-(defun gost-obozn-type(gost_path &optional out_txt_file)
-""
+(defun gost-obozn-type(gost_path)
+"Выполняет разбор одиночного shtml файла.
+Ищет в тегах h1 и h2 обозначение и наименование ГОСТ.
+Волзвращает список, состоящий из:
+- пути к обрабатываемому файлу;
+- обозначения ГОСТ;
+- наименования ГОСТ."
   (let
     (
       (in_shtml_file (open gost_path :direction :input))
@@ -35,7 +88,6 @@
       (str-h1 "")
       (str-h2 "")
     )
-    (setq out_txt_file (if (null out_txt_file) t out_txt_file))
     (loop until in_shtml_file_eof-error-p do
       (setq str (read-line in_shtml_file in_shtml_file_eof-error-p))
       (if (or (not str) in_shtml_file_eof-error-p) 
@@ -47,15 +99,17 @@
       (cond
         ( (and (string/= str_rez "") (string= atag "h1"))
           (setq str-h1 str_rez)
-          (format out_txt_file "~A~C" str_rez #\Tab)
           (setq atag "h2"))
         ( (and (string/= str_rez "") (string= atag "h2"))
           (setq str-h2 str_rez)
-          (format out_txt_file "~A~%" str_rez)
           (close in_shtml_file)
           (return 
             (list gost_path str-h1 str-h2)))))
-    (list gost_path str-h1 str-h2)))
+    (list gost_path str-h1 
+      (string-translate 
+        (string-trim " " str-h2) 
+        *latin-looks-like-cirillic* 
+        *cirillic-looks-like-latin*))))
 
 (defun str-tag-p(str tag)
 ""
@@ -103,9 +157,33 @@
   )
 )
 
-;; (clear-var-list '(s_tag e_tag str_l s_tag_l e_tag_l tag_start tag_end str_rez))
-
-;; (gost-obozn-type "/home/namatv/ftp/vsegost.com/Catalog/69/6976.shtml")
-;; (gost-obozn-type "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com//Catalog/69/6976.shtml")
-
-
+(defun string-translate(str str-from str-to)
+"Выполняет изменение символов строки str,
+основываясь на преобразовании заданном словарями str-from и str-to.
+Если символ строки присутствует в словаре str-from,
+то он заменяется на символ, находящийся на той же позиции в словаре str-to.
+Например:
+(string-translate \"Это\" \"т\" \"1\")
+"
+  (loop 
+    for ch in (concatenate 'list str)
+    for i from 0
+    do
+    (let
+      ((ch-pos (position ch str-from)))
+      (if ch-pos 
+        (setf (char str i) (char str-to ch-pos)))))
+  str)
+  
+(mapcar ;; Компиляция функций
+  (function
+    (lambda (el) (compile el)))
+  '(create-html-vsegost 
+    php-page-counter 
+    walk-vsegost 
+    gost-obozn-type 
+    str-tag-p 
+    str-tag 
+    clear-var-list 
+    clear-func-list 
+    string-translate))
