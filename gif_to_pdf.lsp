@@ -1,5 +1,5 @@
-(load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/directory.lsp")
-(load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/open_file.lsp")
+;; (load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/directory.lsp")
+;; (load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/open_file.lsp")
 
 (defvar *catalog-namber* 0)
 
@@ -119,7 +119,7 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
       dir_str_list)
     (directory-list>directory-string dir_str_list_rez)))
 
-(defun map_shtml_file(file_shtml)
+(defun map-shtml-file(file_shtml)
 "Для каждого shtml файла выполняет:
 1 Поиск имен файлов с расширением gif в подходящем каталоге;
 2 Создание отсортированного списка имен gif файлов и переименованных gif файлов;
@@ -164,7 +164,7 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
 (defun pth-Catalog->Data(str_catalog)
   (let 
     ((catalog_shtml_files (directory str_catalog)))
-    (mapcar (function map_shtml_file) catalog_shtml_files)))
+    (mapcar (function map-shtml-file) catalog_shtml_files)))
 
 (mapcar ;; Компиляция функций
   (function
@@ -175,11 +175,11 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
       rename-gif-file
       path-name-type
       trim-directory-from-tail
-      map_shtml_file
+      map-shtml-file
       pth-Catalog->Data))
 
-;; (map_shtml_file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/11/11623.shtml")
-;; (map_shtml_file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/12/12615.shtml")
+;; (map-shtml-file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/11/11623.shtml")
+;; (map-shtml-file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/12/12615.shtml")
 
 ;; (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Data/**/*.gif")
 ;; (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml")
