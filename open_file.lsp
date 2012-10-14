@@ -1,8 +1,12 @@
-;; (defparameter *html-vsegost* (walk-vsegost #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml"))
+;; Пример использования
+;; (load "gif_to_pdf.lsp")
+;; (load "open_file.lsp")
+;; (defparameter *html-vsegost* (walk-vsegost #P"/home/namatv/sdb7/namatv/vsegost.com/Catalog/**/*.shtml"))
 ;; (create-html-vsegost *html-vsegost*)
-
+;; 
+;; 
+;; 
 ;; (clear-var-list '(s_tag e_tag str_l s_tag_l e_tag_l tag_start tag_end str_rez))
-
 ;; (gost-obozn-type "/home/namatv/ftp/vsegost.com/Catalog/69/6976.shtml")
 ;; (gost-obozn-type "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/69/6976.shtml")
 
@@ -10,22 +14,24 @@
 (defparameter *latin-looks-like-cirillic* "ABCEHKMOPTXaceopxy")
 (defparameter *cirillic-looks-like-latin* "АВСЕНКМОРТХасеорху")
 
-(defun create-html-vsegost(rez)
+(defun create-html-vsegost(dir_gostObozn_gostName_lst)
+"Основываясь на списке, передаваемом в параметре dir_gostObozn_gostName_lst,
+формирует таблицу, содержащую перечень ГОСТ"
   (let 
-    ( (output_html_file (open "/tmp/index.php" :direction :output)))
-    (format output_html_file "<html>~%")
-    (format output_html_file "<head>~%")
-    (format output_html_file "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />~%")
-    (format output_html_file "<title>MNAsoft.ГОСТ</title>~%")
-    (format output_html_file "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://mnasoft.mksat.net/mnasoft_style.css\" />~%")
-    (format output_html_file "<meta name=\"keywords\" content=\"MNASoft,ГОСТ\"/>~%")
-    (format output_html_file "<meta name=\"author\" content=\"Николай Матвеев\"/>~%")
-    (format output_html_file "<body>~%")
-    (php-page-counter output_html_file)
-    (format output_html_file "<table border='2' cols='2'>~%")
-    (format output_html_file "<caption>Перечень ГОСТ по наименованию</caption>~%")
-    (format output_html_file "<tbody>~%")
-    (format output_html_file "<tr><th>~A</th><th>~A</th></tr>~%" "Обозначение" "Наименование")
+    ( (out (open "/tmp/index.php" :direction :output)))
+    (format out "<html>~%")
+    (format out "<head>~%")
+    (format out "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />~%")
+    (format out "<title>MNAsoft.ГОСТ</title>~%")
+    (format out "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://mnasoft.mksat.net/mnasoft_style.css\" />~%")
+    (format out "<meta name=\"keywords\" content=\"MNASoft,ГОСТ\"/>~%")
+    (format out "<meta name=\"author\" content=\"Николай Матвеев\"/>~%")
+    (format out "<body>~%")
+    (php-page-counter out)
+    (format out "<table border='2' cols='2'>~%")
+    (format out "<caption>Перечень ГОСТ по наименованию</caption>~%")
+    (format out "<tbody>~%")
+    (format out "<tr><th>~A</th><th>~A</th></tr>~%" "Обозначение" "Наименование")
     (mapcar 
       (function
         (lambda(el)
@@ -35,21 +41,22 @@
               (tp (cadr n-tp-p))
               (p (caddr n-tp-p)))
             (setq p (concatenate 'string "http://www.vsegost.com/" (trim-directory-from-head p "vsegost.com")))
-            (format output_html_file "<tr>")
-            (format output_html_file "<td><a href=\"~A~A.~A\">~A</a></td>" p n tp (cadr el))
-            (format output_html_file "<td>~A</td></tr>" (caddr el))
-            (format output_html_file "</tr>~%")
+            (format out "<tr>")
+            (format out "<td><a href=\"~A~A.~A\">~A</a></td>" p n tp (cadr el))
+            (format out "<td>~A</td></tr>" (caddr el))
+            (format out "</tr>~%")
           )))
-    rez)
-    (format output_html_file "</tbody>~%")
-    (format output_html_file "</table>~%")
-    (format output_html_file "</body>~%")
-    (format output_html_file "</html>~%")
-    (close output_html_file)
+    dir_gostObozn_gostName_lst)
+    (format out "</tbody>~%")
+    (format out "</table>~%")
+    (format out "</body>~%")
+    (format out "</html>~%")
+    (close out)
   )
 )
 
 (defun php-page-counter(output_html_file)
+"Выполняет вывод в файл output_html_file код для подсчета числа обращений к файлу."
   (format output_html_file "<?php ~%")
   (format output_html_file "$inc_path=\"/var/www/virtual/mnasoft.mksat.net/htdocs/php/includes\"; ~%")
   (format output_html_file "set_include_path($inc_path); ~%")
