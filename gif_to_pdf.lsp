@@ -1,5 +1,23 @@
-;; (load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/directory.lsp")
-;; (load "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/git/clisp/Vse_Gost_Scaner/open_file.lsp")
+;; Пример использования
+;; (load "compile_func.lsp")
+;; (load "gif_to_pdf.lsp")
+;; (load "open_file.lsp")
+;; 
+;; 
+;; 
+;; (load "directory.lsp")
+;; 
+;; (pth-name-shtml #P"/home/namatv/sdb7/namatv/vsegost.com/Catalog/44/4432.shtml")
+
+;; (map-shtml-file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/11/11623.shtml")
+;; (map-shtml-file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/12/12615.shtml")
+
+;; (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Data/**/*.gif")
+;; (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml")
+
+;; (pth-Catalog->Data "/_storage/otd11/namatv/vsegost.com/Catalog/**/*.shtml")
+;; (pth-Catalog->Data "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml")
+      
 
 (defvar *catalog-namber* 0)
 
@@ -33,7 +51,8 @@
     str_rez))
 
 (defun pth-name-shtml (str_path)
-"По имени shtml файла выполняет поиск каталога в, котором находятся gif файлы, предназначенные для переименования"
+"По имени shtml файла выполняет поиск каталога в, котором находятся gif файлы,
+предназначенные для переименования"
   (let*
     ( (str_list (path-name-type str_path))
       (str_name (car str_list))
@@ -166,24 +185,12 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
     ((catalog_shtml_files (directory str_catalog)))
     (mapcar (function map-shtml-file) catalog_shtml_files)))
 
-(mapcar ;; Компиляция функций
-  (function
-    (lambda (el) (compile el)))
-    '(pth-name-format 
-      directory-list>directory-string  
-      pth-name-shtml 
-      rename-gif-file
-      path-name-type
-      trim-directory-from-tail
-      map-shtml-file
-      pth-Catalog->Data))
-
-;; (map-shtml-file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/11/11623.shtml")
-;; (map-shtml-file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/12/12615.shtml")
-
-;; (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Data/**/*.gif")
-;; (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml")
-
-;; (pth-Catalog->Data "/_storage/otd11/namatv/vsegost.com/Catalog/**/*.shtml")
-;; (pth-Catalog->Data "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml")
-      
+(compile-func-lst 
+  '(pth-name-format 
+  directory-list>directory-string 
+  pth-name-shtml 
+  rename-gif-file 
+  path-name-type 
+  trim-directory-from-tail 
+  map-shtml-file 
+  pth-Catalog->Data))

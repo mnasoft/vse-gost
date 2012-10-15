@@ -1,4 +1,5 @@
 ;; Пример использования
+;; (load "compile_func.lsp")
 ;; (load "gif_to_pdf.lsp")
 ;; (load "open_file.lsp")
 ;; (defparameter *html-vsegost* (walk-vsegost #P"/home/namatv/sdb7/namatv/vsegost.com/Catalog/**/*.shtml"))
@@ -43,7 +44,8 @@
             (setq p (concatenate 'string "http://www.vsegost.com/" (trim-directory-from-head p "vsegost.com")))
             (format out "<tr>")
             (format out "<td><a href=\"~A~A.~A\">~A</a></td>" p n tp (cadr el))
-            (format out "<td>~A</td></tr>" (caddr el))
+            (format out "<td>~A</td>" (caddr el))
+            (format out "<td><a href=\"~A~A.~A\">~A</a></td>" (cadddr el) "gost" "pdf" "Просмотреть")
             (format out "</tr>~%")
           )))
     dir_gostObozn_gostName_lst)
@@ -64,7 +66,9 @@
   (format output_html_file "?> ~%"))
 
 (defun walk-vsegost(path-to-shtml-files)
-"Прогулка по всем файлам сайта vsegost.com"
+"Прогулка по всем файлам сайта vsegost.com.
+(walk-vsegost #P\"/home/namatv/sdb7/namatv/vsegost.com/Catalog/**/*.shtml\")
+"
   (let*
     ( (rez
         (mapcar 
@@ -82,24 +86,25 @@
 (defun gost-obozn-type(gost_path)
 "Выполняет разбор одиночного shtml файла.
 Ищет в тегах h1 и h2 обозначение и наименование ГОСТ.
-Волзвращает список, состоящий из:
+Возвращает список, состоящий из:
 - пути к обрабатываемому файлу;
 - обозначения ГОСТ;
-- наименования ГОСТ."
+- наименования ГОСТ;
+- пути к раталогу с файлами gif."
   (let
     (
-      (in_shtml_file (open gost_path :direction :input))
-      (in_shtml_file_eof-error-p nil)
+      (in (open gost_path :direction :input))
+      (in_eof_p nil)
       (atag "h1")
       (str "")
       (str-h1 "")
       (str-h2 "")
     )
-    (loop until in_shtml_file_eof-error-p do
-      (setq str (read-line in_shtml_file in_shtml_file_eof-error-p))
-      (if (or (not str) in_shtml_file_eof-error-p) 
+    (loop until in_eof_p do
+      (setq str (read-line in in_eof_p))
+      (if (or (not str) in_eof_p) 
         (progn 
-          (close in_shtml_file)
+          (close in)
           (return
             (list gost_path str-h1 str-h2))))
       (setq str_rez (str-tag str atag))
@@ -109,14 +114,17 @@
           (setq atag "h2"))
         ( (and (string/= str_rez "") (string= atag "h2"))
           (setq str-h2 str_rez)
-          (close in_shtml_file)
+          (close in)
           (return 
             (list gost_path str-h1 str-h2)))))
-    (list gost_path str-h1 
+    (list 
+      gost_path 
+      str-h1 
       (string-translate 
         (string-trim " " str-h2) 
         *latin-looks-like-cirillic* 
-        *cirillic-looks-like-latin*))))
+        *cirillic-looks-like-latin*)
+      (string-concat "./" (trim-directory-from-head (pth-name-shtml gost_path) "vsegost.com")))))
 
 (defun str-tag-p(str tag)
 ""
@@ -149,7 +157,7 @@
 )
 
 (defun clear-var-list(var_lst)
-""
+"Очищает пространство нодов от переменных, передаваемых в списке var_lst."
   (mapcar 
     (function(lambda(el) (makunbound el )))
     var_lst
@@ -157,7 +165,7 @@
 )
 
 (defun clear-func-list(func_lst)
-""
+"Очищает пространство нодов от функций, передаваемых в списке func_lst."
   (mapcar 
     (function(lambda(el) (fmakunbound el )))
     func_lst
@@ -181,16 +189,14 @@
       (if ch-pos 
         (setf (char str i) (char str-to ch-pos)))))
   str)
-  
-(mapcar ;; Компиляция функций
-  (function
-    (lambda (el) (compile el)))
+
+(compile-func-lst 
   '(create-html-vsegost 
-    php-page-counter 
-    walk-vsegost 
-    gost-obozn-type 
-    str-tag-p 
-    str-tag 
-    clear-var-list 
-    clear-func-list 
-    string-translate))
+  php-page-counter 
+  walk-vsegost 
+  gost-obozn-type 
+  str-tag-p 
+  str-tag 
+  clear-var-list 
+  clear-func-list 
+  string-translate))
