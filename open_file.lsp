@@ -1,15 +1,18 @@
-;; Пример использования
-;; (load "compile_func.lsp")
-;; (load "gif_to_pdf.lsp")
-;; (load "open_file.lsp")
-;; (defparameter *html-vsegost* (walk-vsegost #P"/home/namatv/sdb7/namatv/vsegost.com/Catalog/**/*.shtml"))
-;; (create-html-vsegost *html-vsegost*)
-;; 
-;; 
-;; 
-;; (clear-var-list '(s_tag e_tag str_l s_tag_l e_tag_l tag_start tag_end str_rez))
-;; (gost-obozn-type "/home/namatv/ftp/vsegost.com/Catalog/69/6976.shtml")
-;; (gost-obozn-type "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/69/6976.shtml")
+#|
+
+Пример использования
+cd /home/namatv/sdb7/namatv/git/clisp/Vse_Gost_Scaner/
+clisp
+(load "compile_func.lsp")
+(load "gif_to_pdf.lsp")
+(load "open_file.lsp")
+(defparameter *html-vsegost* (walk-vsegost #P"/home/namatv/sdb7/namatv/vsegost.com/Catalog/**/*.shtml"))
+(create-html-vsegost *html-vsegost*)
+
+(clear-var-list '(s_tag e_tag str_l s_tag_l e_tag_l tag_start tag_end str_rez))
+(gost-obozn-type "/home/namatv/ftp/vsegost.com/Catalog/69/6976.shtml")
+(gost-obozn-type "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/69/6976.shtml")
+|# 
 
 (defvar str_rez "")
 (defparameter *latin-looks-like-cirillic* "ABCEHKMOPTXaceopxy")
@@ -153,8 +156,12 @@
 
 (defun str-tag(str tag)
 "!"
-  (if (str-tag-p str tag) str_rez "")
+  (let*
+    (
+      (str_rez ""))
+    (if (str-tag-p str tag) str_rez ""))
 )
+
 
 (defun clear-var-list(var_lst)
 "Очищает пространство нодов от переменных, передаваемых в списке var_lst."
