@@ -1,23 +1,13 @@
-;; Пример использования
-;; (load "compile_func.lsp")
-;; (load "gif_to_pdf.lsp")
-;; (load "open_file.lsp")
-;; 
-;; 
-;; 
-;; (load "directory.lsp")
-;; 
-;; (pth-name-shtml #P"/home/namatv/sdb7/namatv/vsegost.com/Catalog/44/4432.shtml")
-
-;; (map-shtml-file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/11/11623.shtml")
-;; (map-shtml-file "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/12/12615.shtml")
-
-;; (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Data/**/*.gif")
-;; (directory #P"/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml")
-
-;; (pth-Catalog->Data "/_storage/otd11/namatv/vsegost.com/Catalog/**/*.shtml")
-;; (pth-Catalog->Data "/media/358289b8-1f08-40ad-b8d9-e0afcfaffa3e/namatv/vsegost.com/Catalog/**/*.shtml")
-      
+;; Пример использования:
+;; $ cd ~/Downloads
+;; $ wget -m -np http://vsegost.com/
+;; $ cd ~/MyDoc/git/mnasoft/Vse_Gost_Scaner/
+;; $ clisp
+;; > (load "compile_func.lsp")
+;; > (load "gif_to_pdf.lsp")
+;; > (load "open_file.lsp")
+;; > (load "directory.lsp")
+;; > (pth-Catalog->Data "/home/namatv/Downloads/vsegost.com/Catalog/**/*.shtml")     
 
 (defvar *catalog-namber* 0)
 
@@ -181,6 +171,13 @@ str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
       gif_file_from_to_list)))
 
 (defun pth-Catalog->Data(str_catalog)
+"
+1 Выполняет поиск файлов с расширением *.shtml;
+2 Для каждого имени файла выполняет поиск соответствующего ему каталога с фалами типа *.gif;
+3 Выполняет сборку, найденных в пункте 2 файлов *.gif, в файл gost.pdf.
+Пример:
+(pth-Catalog->Data \"/home/namatv/Downloads/vsegost.com/Catalog/**/*.shtml\")
+"
   (let 
     ((catalog_shtml_files (directory str_catalog)))
     (mapcar (function map-shtml-file) catalog_shtml_files)))
