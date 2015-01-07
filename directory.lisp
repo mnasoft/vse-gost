@@ -1,3 +1,9 @@
+;;;; directory.lisp
+
+
+(in-package #:vse-gost)
+
+
 (defun component-present-p (value)
   (and value (not (eql value :unspecific))))
 
