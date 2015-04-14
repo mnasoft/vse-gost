@@ -28,8 +28,7 @@
 (defun create-html-vsegost(dir_gostObozn_gostName_lst)
   "Основываясь на списке, передаваемом в параметре dir_gostObozn_gostName_lst,
 формирует таблицу, содержащую перечень ГОСТ"
-  (let 
-      ( (out (open "/tmp/index.php" :direction :output)))
+  (let ((out (open "/tmp/index.php" :direction :output)))
     (format out "<html>~%")
     (format out "<head>~%")
     (format out "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />~%")
@@ -43,29 +42,24 @@
     (format out "<caption>Перечень ГОСТ по наименованию</caption>~%")
     (format out "<tbody>~%")
     (format out "<tr><th>~A</th><th>~A</th></tr>~%" "Обозначение" "Наименование")
-    (mapcar 
-     (function
-      (lambda(el)
-       (let*
-	   ( (n-tp-p (path-name-type (car el)))
-	    (n (car n-tp-p))
-	     (tp (cadr n-tp-p))
-	     (p (caddr n-tp-p)))
-	 (setq p (concatenate 'string "http://www.vsegost.com/" (trim-directory-from-head p "vsegost.com")))
-	 (format out "<tr>")
-	 (format out "<td><a href=\"~A~A.~A\">~A</a></td>" p n tp (cadr el))
-	 (format out "<td>~A</td>" (caddr el))
-	 (format out "<td><a href=\"~A~A.~A\">~A</a></td>" (cadddr el) "gost" "pdf" "Просмотреть")
-	 (format out "</tr>~%")
-	 )))
-     dir_gostObozn_gostName_lst)
+    (mapcar #'(lambda(el)
+		(let*
+		    ((n-tp-p (path-name-type (car el)))
+		     (n (car n-tp-p))
+		     (tp (cadr n-tp-p))
+		     (p (caddr n-tp-p)))
+		  (setf p (concatenate 'string "http://www.vsegost.com/" (trim-directory-from-head p "vsegost.com")))
+		  (format out "<tr>")
+		  (format out "<td><a href=\"~A~A.~A\">~A</a></td>" p n tp (cadr el))
+		  (format out "<td>~A</td>" (caddr el))
+		  (format out "<td><a href=\"~A~A.~A\">~A</a></td>" (cadddr el) "gost" "pdf" "Просмотреть")
+		  (format out "</tr>~%")))
+	    dir_gostObozn_gostName_lst)
     (format out "</tbody>~%")
     (format out "</table>~%")
     (format out "</body>~%")
     (format out "</html>~%")
-    (close out)
-    )
-  )
+    (close out)))
 
 (defun string-translate(str str-from str-to)
   "Выполняет изменение символов строки str,
