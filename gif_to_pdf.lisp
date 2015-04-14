@@ -16,15 +16,23 @@
 (defvar *catalog-namber* 0)
 
 (defun path-name-type(str_path)
-"Разбивает полное имя файла на: str_name - имя файла; str_type - расширение файла; str_directory - путь.
-Возвращает путь к файлу.
-Например: (path-name-type \"/usr/local/name.ext\") -> \"/usr/local/\"
-str_name -> \"name\" ; str_type -> \"ext\" ; str_directory -> \"/usr/local/\". "
+"Разбивает полное имя файла на: 
+str_name - имя файла; 
+str_type - расширение файла; 
+str_directory - путь.
+Возвращает список элементами которого являются:
+имя файла, расширение файла и путь к файлу.
+Пример использования:
+(path-name-type \"/usr/local/name.ext\")
+=> (\"name\" \"ext\" \"/usr/local/\") 
+"
   (let 
     ( (str_name (pathname-name str_path))
       (str_type (pathname-type str_path))
       (str_directory (directory-namestring str_path)))
     (list str_name str_type str_directory)))
+
+(path-name-type "/usr/local/name.ext")
 
 (defun pth-name-format (str_path)
 "Выводит на печать переменные, определенные в функции path-name-type."
