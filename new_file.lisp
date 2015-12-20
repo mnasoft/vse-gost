@@ -1,112 +1,5 @@
-(defun get-tag(tag str &key (start 0))
-  (let*
-      ((o-tag (concatenate 'string oab tag cab))
-       (o-tag-len (length o-tag))
-       (c-tag (concatenate 'string  oab sl  tag cab))
-       (c-tag-len (length c-tag))
-       (s nil)
-       (e nil ))
-    (setf s (search o-tag str :start2 start))
-    (cond
-      ((null s) nil)
-      ((setf e (search c-tag str :start2 (+ s o-tag-len)))
-       (values (subseq str (+ s o-tag-len) e) (+ e c-tag-len))))))
-
-(defparameter oab "<")
-
-(defparameter cab ">")
-
-(defparameter sl "/")
-
-(defparameter str "   <p><span class=\"g\">действующий</span>&nbsp;Настоящий стандарт распространяется на переносные огнетушители с полной массой не более 20 кг, предназначенные для тушения пожаров классов А, В, С, Е. Настоящий стандарт устанавливает основные показатели и методы испытаний переносных огнетушителей.<br>   Настоящий стандарт не распространяется на огнетушители специального назначения (ранцевые, авиационные, для тушения лесных пожаров, для тушения пожаров класса D и др.)</p>")
-
-(defun get-tag(tag str &key (start 0))
-  (let*
-      ((o-tag (concatenate 'string oab tag))
-       (o-tag-len (length o-tag))
-       (c-tag (concatenate 'string  oab sl tag))
-       (c-tag-len (length c-tag))
-       (so nil)
-       (sc nil)
-       (eo nil)
-       (ec nil))
-    (if
-     (and (setf so (search o-tag str :start2 start))
-	  (setf sc (search cab str :start2 (+ so o-tag-len)))
-	  (setf eo (search c-tag str :start2 (+ sc (length cab))))
-	  (setf ec (search cab str :start2 (+ eo c-tag-len))))
-     (values     (subseq str (+ sc (length cab)) eo)
-		 (+ ec (length cab))
-		 (subseq str (+ so o-tag-len) sc))
-     nil)))
-
-(get-tag "p" str)
-
-
-(defun pseudo-cat (file)
-  (with-open-file (str file :direction :input)
-    (do
-     ( (line (read-line str nil 'eof) (read-line str nil 'eof))
-       (oboznach nil)
-       (naimenovan nil)
-       (description nil)
-       (gif-refs nil)
-       )
-     ((or
-       (and
-	oboznach
-	naimenovan
-	description
-;;;;	gif-refs
-	)
-       (eql line 'eof)) (list oboznach naimenovan description))
-      (format t "~A~%" line)
-      (if (null oboznach) (setf oboznach (get-tag "h1" line)))
-      (if (null naimenovan) (setf naimenovan (get-tag "h2" line)))
-      (if (null description) (setf description (get-tag "p" line)))
-      )))
-
-;;;;(pseudo-cat "/home/namatv/Downloads/vsegost.com_1/Catalog/65/6548.shtml")
-
-(defun cat (file)
-  (with-open-file (str file :direction :input)
-    (do
-     ((line (read-line str nil 'eof) (read-line str nil 'eof))
-      (str-rez "")
-      )
-     ((eql line 'eof) str-rez)
-      (setf str-rez (concatenate 'string str-rez line))
-      )))
-;;;;(cat "/home/namatv/6548.shtml")
-
-
-
-(defun get-tag(tag str &key (start 0))
-  "Выполняет разбор парного невложенного тега
-Возвращает:
-- первым значением содержимое тега;
-- вторым значением количество прочитанных символов;
-- третьим значением содержимое преамбулы тега
-"
-  (let*
-      ((o-tag (concatenate 'string oab tag))
-       (o-tag-len (length o-tag))
-       (oc-tag cab)
-       (oc-tag-len (length oc-tag))
-       (c-tag (concatenate 'string  oab sl tag cab))
-       (c-tag-len (length c-tag))
-       (s nil)
-       (se nil)
-       (e nil ))
-    (setf s (search o-tag str :start2 start))
-    (if s (setf se (search oc-tag str :start2 (+ s o-tag-len))))
-    (cond
-      ((null se) nil)
-      ((setf e (search c-tag str :start2 (+ se oc-tag-len)))
-       (values (subseq str (+ se oc-tag-len) e)
-	       (subseq str (+ s o-tag-len) se)
-	       (+ e c-tag-len))))))
-
+(in-package #:vse-gost)
+ 
 (defun tag-head(str &key (start 0))
   "Пример использования
 (tag-head \" href='../../Data/1/131/0.gif' rel='gb_imageset[g]' title='ГОСТ ЕН 12626-2006 страница 1'\")
@@ -264,8 +157,6 @@
 7. Если счетчики открывающих и закрывающих тегов совпали, пара найдена.
 8. Подсвечиваем нужные позиции.
 "
-
-(require :uiop)
 
 (defun walk-subdirs (dir)
   (do (
