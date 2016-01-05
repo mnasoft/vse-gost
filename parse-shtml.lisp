@@ -1,4 +1,6 @@
 (in-package #:vse-gost)
+
+(declaim (optimize (debug 3)))
  
 (defparameter oab "<")
 
@@ -14,8 +16,6 @@
 
 (defparameter *fn* "/home/namatv/Downloads/vsegost.com_1/Catalog/65/6548.shtml")
 (defparameter *fn* "/home/namatv/Downloads/vsegost.com_1/Catalog/29/2905.shtml")
-
-(declaim (optimize (debug 3)))
 
 (defun cat (file)
   (with-open-file (str file :direction :input)
@@ -54,7 +54,7 @@
 		 (subseq str (+ so o-tag-len) sc))
      nil)))
 
-(defun parse-vsegost-shtml (file)
+(defun parse-vsegost-shtml_bak (file)
   "Выполняет специальный парсинг shtml-файлов сайта vsegost.com
 Возвращает список содержащий следующие поля
 - относительный путь расположения gif-файлов;
@@ -71,20 +71,59 @@
 	 (description nil)
 	 (path-to-gifs nil))
 	((or (and oboznach naimenovan description path-to-gifs)
-	     (eql line 'eof)) (list  path-to-gifs oboznach naimenovan description )) ;;  
+	     (eql line 'eof)) (list  path-to-gifs oboznach naimenovan description )) ;;
       (cond
 	((null oboznach)
 	 (setf oboznach (get-tag "h1" line)))
 	((and oboznach (null naimenovan))
-	 (setf naimenovan (get-tag "h2" line)))
+	 (setf naimenovan (get-tag "h2" line))
+	 (break ":1 ~S" (list line oboznach naimenovan description))
+	 )
 	((and oboznach naimenovan (null description))
-	 (setf description (get-tag "p" line)))
+	 (setf description (get-tag "p" line))
+	 (break ":2 ~S" (list line oboznach naimenovan description))
+	 )
 	((and oboznach naimenovan  description (null path-to-gifs))
+	 (break ":3 ~S" line)
 	 (multiple-value-bind (tag-val ch-num tag-head) (get-tag "a" line)
 	   (if tag-val
 	       (progn
 		 (setf path-to-gifs 
-		       (make-pathname :directory (cons :relative (reverse (cdr (reverse (cddr (cl-ppcre:split "/"(second(cl-ppcre:split "'" tag-head))))))))))))))))))
+		       (make-pathname :directory (cons :relative (reverse (cdr (reverse (cddr (cl-ppcre:split "/" (second(cl-ppcre:split "'" tag-head))))))))))))))))))
+
+(defun parse-vsegost-shtml (file)
+  "Выполняет специальный парсинг shtml-файлов сайта vsegost.com
+Возвращает список содержащий следующие поля
+- относительный путь расположения gif-файлов;
+- строку, содержащую обозначение ГОСТ;
+- строку, содержащую наименование ГОСТ;
+- строку, содержащую описание ГОСТ
+Пример использования:
+(parse-vsegost-shtml *fn*)
+"
+  (with-open-file (str file :direction :input)
+    (do ((line (read-line str nil 'eof) (read-line str nil 'eof))
+	 (oboznach nil)
+	 (naimenovan nil)
+	 (description nil)
+	 (path-to-gifs nil))
+	((or (and oboznach naimenovan description path-to-gifs) (eql line 'eof))
+         (if path-to-gifs 
+	     (list path-to-gifs oboznach naimenovan description )
+             (list "Data/0000/0000/" oboznach naimenovan description )))
+      (cond
+	((null oboznach)                              (setf oboznach (get-tag "h1" line)))
+	((and oboznach (null naimenovan))             (setf naimenovan (get-tag "h2" line)))
+	((and oboznach naimenovan (null description)) (setf description (get-tag "p" line)))
+	((and oboznach naimenovan description (null path-to-gifs))
+	 (multiple-value-bind (tag-val ch-num tag-head) (get-tag "a" line)
+	   (let ((tag-spit (cl-ppcre:split "/" (second(cl-ppcre:split "'" tag-head)))))
+	     (if (and tag-val
+		      (> (length tag-spit)3)
+		      (string= ".." (first tag-spit))
+		      (string= ".." (second tag-spit))
+		      (string= "Data" (third tag-spit)))
+		 (setf path-to-gifs (make-pathname :directory (cons :relative (reverse (cdr (reverse (cddr tag-spit)))))))))))))))
 
 (defun string-filter-01(str)
   (setf str (cl-ppcre:regex-replace-all "<br>"  str " ")

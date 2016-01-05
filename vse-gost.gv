@@ -1,0 +1,27 @@
+digraph{
+ rankdir=LR
+ "convert-to-postgres"->"SB-KERNEL:EXTENDED-SEQUENCE-P"
+ "convert-to-postgres"->"FORMAT"
+ "convert-to-postgres"->"get-tag"
+ "convert-to-postgres"->"string-filter-01"
+ "convert-to-postgres"->"READ"
+ "convert-to-postgres"->"MAKE-STRING-INPUT-STREAM"
+ "convert-to-postgres"->"TERPRI"
+ "convert-to-postgres"->" WRITE-STRING"
+ "convert-to-postgres"->"SB-KERNEL:%LAST1"
+ "convert-to-postgres"->"CL-PPCRE:SPLIT"
+ "convert-to-postgres"->"PRINC"
+
+ "get-tag"->"SUBSEQ"
+ "get-tag"->"SEARCH"
+ "get-tag"->"SB-KERNEL:%CONCATENATE-TO-STRING"
+
+ "string-filter-01"->"CL-PPCRE:REGEX-REPLACE-ALL"
+ "parse-vsegost-shtml"->"SB-KERNEL:EXTENDED-SEQUENCE-P"
+ "parse-vsegost-shtml"->"MAKE-PATHNAME"
+ "parse-vsegost-shtml"->"REVERSE"
+ "parse-vsegost-shtml"->"CL-PPCRE:SPLIT"
+ "parse-vsegost-shtml"->"GET-TAG"
+ "parse-vsegost-shtml"->"READ-LINE"
+ "parse-vsegost-shtml"->"OPEN"
+}
