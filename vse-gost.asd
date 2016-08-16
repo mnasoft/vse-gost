@@ -8,10 +8,5 @@
   :serial t
   :components ((:file "package")
                (:file "vse-gost")
-;;;;	       (:file "compile_func")
-;;;;	       (:file "directory")
-;;;;	       (:file "gif_to_pdf")
-;;;;	       (:file "open_file")
 	       (:file "parse-shtml")
-      	       (:file "walk-dir")
-	       ))
+      	       (:file "walk-dir")))
