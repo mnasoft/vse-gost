@@ -4,7 +4,7 @@
   :description "Describe vse-gost here"
   :author "Your Name <your.name@example.com>"
   :license "Specify license here"
-  :depends-on (#:inferior-shell #:cl-ppcre #:uiop)
+  :depends-on (#:cl-ppcre)
   :serial t
   :components ((:file "package")
                (:file "vse-gost")
