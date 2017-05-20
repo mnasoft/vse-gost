@@ -53,3 +53,9 @@ copy gost (local_path, designation, date, name, description, status) from '/home
 (vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*)
 
 Примечание: Примерное время выполнения сценария 5 минут.
+
+rsync -avzh --progress /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
+
+rsync -azh --info=progress2 /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
+
+rsync -avzh --progress /home/namatv/out.txt root@192.168.0.110:/home/namatv/
