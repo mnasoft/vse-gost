@@ -10,6 +10,7 @@ pdf-файлов, содержащих ГОСТы
 содержащих отображение гостов целиком.
 
 ИНСТРУКЦИЯ
+==========
 
 1. Переход в рабочий каталог для зеркалирования (bash)
 cd ~/Downloads
@@ -21,7 +22,35 @@ wget -m -np http://vsegost.com/
 3. Для создания файла импорта '/home/namatv/out.txt' в PostgreSQL выполнте следующее:
 (vse-gost:main-create-PostgreSQL-import-file vse-gost:*vsegost-Catalog*)
 
-3.1 Для создания таблицы, содержащей 
+4. Для создания файла скрипта, преобразующего gif-файлы каждого каталога в  файл gost.pdf.
+(vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*)
+
+Примечание: Примерное время выполнения сценария 5 минут.
+
+rsync -avzh --progress /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
+
+rsync -azh --info=progress2 /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
+
+rsync -avzh --progress /home/namatv/out.txt root@192.168.0.110:/home/namatv/
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+5. Создание базы данных gost на удаленом сервере mnasoft-pi для пользователя namatv
+
+5.1 Переходим в запись postgres
+namatv@mnasoft-pi:~$ sudo su - postgres
+
+5.2 Создаем роль namatv
+postgres@mnasoft-pi:~$ createuser -dsRP namatv
+
+5.3 Создаем для владельца namatv базу gost
+namatv@mnasoft-pi:~$ createdb -O namatv gost
+
+5.4 Входим в консоль postgresql
+namatv@mnasoft-pi:~$ psql -d gost -U namatv
+
+5.5 Создаем таблицу gost
+gost=# 
 CREATE TABLE public.gost
 (
   id serial PRIMARY KEY,                                        -- Идентификатор записи
@@ -45,17 +74,8 @@ COMMENT ON COLUMN public.gost.description IS   'Краткиое описани�
 COMMENT ON COLUMN public.gost.local_path IS    'Путь к документу на локальном сервере.';
 COMMENT ON COLUMN public.gost.external_path IS 'Путь к документу на удалённом сервере.';
 
-
-3.2 Для импорта в PostgreSQL выполнте в psql следующее:
+5.6 Импортируем содержимое таблицы gost из файла:
+gost=# 
 copy gost (local_path, designation, date, name, description, status) from '/home/namatv/out.txt';
 
-4. Для создания файла скрипта, преобразующего gif-файлы каждого каталога в  файл gost.pdf.
-(vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*)
-
-Примечание: Примерное время выполнения сценария 5 минут.
-
-rsync -avzh --progress /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
-
-rsync -azh --info=progress2 /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
-
-rsync -avzh --progress /home/namatv/out.txt root@192.168.0.110:/home/namatv/
+6. Запуск веб на удаленном сервере
