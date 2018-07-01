@@ -77,5 +77,6 @@ COMMENT ON COLUMN public.gost.external_path IS 'Путь к документу �
 5.6 Импортируем содержимое таблицы gost из файла:
 gost=# 
 copy gost (local_path, designation, date, name, description, status) from '/home/namatv/out.txt';
+copy gost (local_path, designation, date, name, description, status) from 'D:\PRG\msys32\home\namatv\quicklisp\local-projects\clisp\vse-gost\out_1.txt';
 
 6. Запуск веб на удаленном сервере
