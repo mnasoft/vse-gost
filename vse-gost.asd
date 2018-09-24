@@ -1,9 +1,9 @@
 ;;;; vse-gost.asd
 
-(asdf:defsystem #:vse-gost
+(defsystem #:vse-gost
   :description "Describe vse-gost here"
-  :author "Your Name <your.name@example.com>"
-  :license "Specify license here"
+  :author "Nick Matvyeyev <mnasoft@gmail.com>"
+  :license "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 or later"  
   :depends-on (#:cl-ppcre)
   :serial t
   :components ((:file "package")
