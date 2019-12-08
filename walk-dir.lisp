@@ -1,8 +1,16 @@
 (in-package #:vse-gost)
 
-(defparameter *vsegost-Catalog* #p"/home/namatv/Downloads/vsegost.com/Catalog/")
+(defparameter *vsegost-Catalog* #p"/home/namatv/Downloads/vsegost.com/Catalog/"
+	      "@b(Описание:)
 
-(defparameter *vsegost-Data*    #p"/home/namatv/Downloads/vsegost.com/Data/")
+Каталог в файловой системе, куда отзеркалированы данные о ГОСТ.
+")
+
+(defparameter *vsegost-Data*    #p"/home/namatv/Downloads/vsegost.com/Data/"
+	      	      "@b(Описание:)
+
+Каталог в файловой системе, куда отзеркалированы gif-файлы, содержащие отсканированные изображения ГОСТ.
+")
 
 (defun walk-subdirs (dir)
   "Возвращает список директорий начиная с директория dir.
@@ -28,10 +36,19 @@
 (defun main-create-PostgreSQL-import-file (vsegost-catalog-dir &optional (import-file-name #P"/home/namatv/out.txt"))
   "
 @b(Описание:)
-@b(main-create-PostgreSQL-import-file) ыполняет формирование файла для импортирования таблицы ГОСТ в PostgreSQL.
-vsegost-catalog-dir - расположение каталога vsegost.com/Catalog на зеркале сайта.
-Пример использования:
-(vse-gost:main-create-PostgreSQL-import-file vse-gost:*vsegost-Catalog*)
+@b(main-create-PostgreSQL-import-file) выполняет формирование файла для импортирования таблицы ГОСТ в PostgreSQL.
+
+@b(Переменые:)
+@begin(list)
+ @item(vsegost-catalog-dir - расположение каталога vsegost.com/Catalog на 
+зеркале сайта;)
+ @item(import-file-name    - имя файла, в который выводится информация с данными для формирования таблицы, содержащей информацию о ГОСТ.)
+@end(list)
+
+@b(Пример использования:)
+@begin[lang=lisp](code)
+ (vse-gost:main-create-PostgreSQL-import-file vse-gost:*vsegost-Catalog*)
+@end(code)
 "
 
   (with-open-file 
