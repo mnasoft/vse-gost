@@ -24,8 +24,11 @@
 "
   (apply #'append (mapcar #'uiop:directory-files (walk-subdirs dir))))
 
-(defun main-create-PostgreSQL-import-file(vsegost-catalog-dir &optional (import-file-name #P"/home/namatv/out.txt"))
-  "Выполняет формирование файла для импортирования таблицы ГОСТ в PostgreSQL.
+
+(defun main-create-PostgreSQL-import-file (vsegost-catalog-dir &optional (import-file-name #P"/home/namatv/out.txt"))
+  "
+@b(Описание:)
+@b(main-create-PostgreSQL-import-file) ыполняет формирование файла для импортирования таблицы ГОСТ в PostgreSQL.
 vsegost-catalog-dir - расположение каталога vsegost.com/Catalog на зеркале сайта.
 Пример использования:
 (vse-gost:main-create-PostgreSQL-import-file vse-gost:*vsegost-Catalog*)
