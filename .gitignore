@@ -1,7 +1,9 @@
+.directory
+*~
 *.FASL
 *.fasl
 *.lisp-temp
-*~
+build
 \#*#
 
 # =========================
