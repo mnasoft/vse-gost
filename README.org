@@ -1,88 +1,148 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: README
+#+date: <2021-09-29 Ср>
+#+author:
+#+email: namatv@gmail.com
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 27.2 (Org mode 9.4.4)
+#+options: html-link-use-abs-url:nil html-postamble:auto
+#+options: html-preamble:t html-scripts:t html-style:t
+#+options: html5-fancy:nil tex:t
+#+html_doctype: xhtml-strict
+#+html_container: div
+#+description:
+#+keywords:
+#+html_link_home:
+#+html_link_up:
+#+html_mathjax:
+#+html_equation_reference_format: \eqref{%s}
+#+html_head:
+#+html_head_extra:
+#+subtitle:
+#+infojs_opt:
+#+creator: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.4)
+#+latex_header:
+
 * Назначение
-Проект предназначен для разбора информации о ГОСТ, размещенной на сайте vsegost.com
+Проект предназначен для разбора информации о ГОСТ, размещенной на
+сайте [[http://vsegost.com]]
 * Зависимости
-Для ковертирования файлов с расширением gif в файлы с расширением pdf используется соманда *convert*.
-#+BEGIN_SRC shell
+Для ковертирования файлов с расширением gif в файлы с расширением pdf
+используется соманда *convert*.
+#+begin_src shell
 sudo apt install graphicsmagick-imagemagick-compat
-#+END_SRC
+#+end_src
 
 * Информация о каталогах сайта vsegost.com
-Информация о ГОСТ, размещенная на сайте vsegost.com, содержится в нескольких каталогах:
-#+BEGIN_SRC shell
-ls ~/Downloads/vsegost.com
-#+END_SRC
+Информация о ГОСТ, размещенная на сайте vsegost.com, содержится в
+нескольких каталогах:
+#+begin_src shell
+  ls ~/Downloads/2015-12-21-vsegost.com
+#+end_src
 
 #+RESULTS:
 | Catalog     |
 | Categories  |
+| css         |
 | Data        |
 | DataTN      |
-| NCategories |
-| css         |
 | index.html  |
 | js          |
+| NCategories |
 
 ** Catalog
-В подкаталогах директория Catalog хранятся файлы с расширением *.shtm, в которых присутствует информация содержащая:
+В подкаталогах директория Catalog хранятся файлы с расширением *.shtm,
+в которых присутствует информация содержащая:
 - обозначение ГОСТ;
 - наименование ГОСТ;
 - краткое описание ГОСТ.
 
 ** Data
-В подкаталогах директория Data хранятся файлы с расширением *.gif, с отсканированными страницами ГОСТ.
+В подкаталогах директория Data хранятся файлы с расширением *.gif, с
+отсканированными страницами ГОСТ.
 
 * Цели:
-- Разбор содержимого зеркалированного сайта vsegost.com и формирование базы данных ГОСТ;
+- Разбор содержимого зеркалированного сайта vsegost.com и формирование
+  базы данных ГОСТ;
 - Конвертирование gif-файлов в формат pdf.
 - Создание сайта, содержащего pdf ГОСТов.
 
 * Проект vse-gost предназначен для:
-1. Генерации скрипта, выполняющего заполнение данными таблицы базы данных PostgreSQL, которая содержит, обозначения ГОСТов, наименования ГОСТов, описания ГОСТов и данные о расположении pdf-файлов, содержащих ГОСТы
-2. Генерации скрипта, выполняющего преобразование gif-файлов, содержащих постраничное отображение ГОСТов, в pdf-файлы, содержащих отображение гостов целиком.
+1. Генерации скрипта, выполняющего заполнение данными таблицы базы
+   данных PostgreSQL, которая содержит, обозначения ГОСТов,
+   наименования ГОСТов, описания ГОСТов и данные о расположении
+   pdf-файлов, содержащих ГОСТы
+2. Генерации скрипта, выполняющего преобразование gif-файлов,
+   содержащих постраничное отображение ГОСТов, в pdf-файлы, содержащих
+   отображение гостов целиком.
 
 * ИНСТРУКЦИЯ
 
 ** Переход в рабочий каталог для зеркалирования (bash)
-
+#+begin_src shell
 cd ~/Downloads
+#+end_src
 
 * Зеркалирование (bash)
+#+begin_src shell
 wget -m -np http://vsegost.com/
+#+end_src
 
 * Настройка postgreSQL
 ** Для создания файла импорта '/home/namatv/out.txt' в PostgreSQL выполнте следующее:
-
+   
+#+begin_src lisp
 (vse-gost:main-create-PostgreSQL-import-file vse-gost:*vsegost-Catalog*)
+#+end_src
 
 ** Для создания файла скрипта, преобразующего gif-файлы каждого каталога в  файл gost.pdf
 
+#+begin_src lisp
 (vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*)
-
+#+end_src
 Примечание: Примерное время выполнения сценария 5 минут.
 
+** Примеры переноса файлов на сервер
+#+begin_src shell
 rsync -avzh --progress /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
 
 rsync -azh --info=progress2 /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
 
 rsync -avzh --progress /home/namatv/out.txt root@192.168.0.110:/home/namatv/
+#+end_src
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 * Создание базы данных gost на удаленом сервере mnasoft-pi для пользователя namatv
 
 ** Переходим в запись postgres
+#+begin_src shell
 namatv@mnasoft-pi:~$ sudo su - postgres
+#+end_src
 
 ** Создаем роль namatv
+#+begin_src shell
 postgres@mnasoft-pi:~$ createuser -dsRP namatv
+#+end_src
 
 ** Создаем для владельца namatv базу gost
+#+begin_src shell   
 namatv@mnasoft-pi:~$ createdb -O namatv gost
+#+end_src
 
 ** Входим в консоль postgresql
+#+begin_src shell 
 namatv@mnasoft-pi:~$ psql -d gost -U namatv
+#+end_src
 
 ** Создаем таблицу gost
+#+begin_src sql
 gost=# 
 CREATE TABLE public.gost
 (
@@ -106,10 +166,13 @@ COMMENT ON COLUMN public.gost.name IS          'Наименование Ста�
 COMMENT ON COLUMN public.gost.description IS   'Краткиое описание Стандарта';
 COMMENT ON COLUMN public.gost.local_path IS    'Путь к документу на локальном сервере.';
 COMMENT ON COLUMN public.gost.external_path IS 'Путь к документу на удалённом сервере.';
-
+#+end_src
 ** Импортируем содержимое таблицы gost из файла:
-gost=# 
-copy gost (local_path, designation, date, name, description, status) from '/home/namatv/out.txt';
-copy gost (local_path, designation, date, name, description, status) from 'D:\PRG\msys32\home\namatv\quicklisp\local-projects\clisp\vse-gost\out_1.txt';
-
+#+begin_src sql   
+  gost=# 
+  copy gost (local_path, designation, date, name, description, status)
+       from '/home/namatv/out.txt';
+  copy gost (local_path, designation, date, name, description, status)
+  from 'D:\PRG\msys32\home\namatv\quicklisp\local-projects\clisp\vse-gost\out_1.txt';
+#+end_src
 * Запуск веб на удаленном сервере
