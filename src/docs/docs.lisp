@@ -40,7 +40,7 @@
   (mnas-package:make-mainfest-lisp
    '(:vse-gost :vse-gost/docs)
    "Vse-Gost"
-   '("Nick Matvyeyev")
+   '("Mykola Matvyeyev")
    (mnas-package:find-sources "vse-gost")
    :output-format of)
   (codex:document :vse-gost)

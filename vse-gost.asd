@@ -194,7 +194,7 @@ Bla-Bla-Bla.
 @end(section)
 "
 
-  :author "Nick Matvyeyev <mnasoft@gmail.com>"
+  :author "Mykola Matvyeyev <mnasoft@gmail.com>"
   :license "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 or later"  
   :depends-on (#:cl-ppcre)
   :serial nil
@@ -206,7 +206,7 @@ Bla-Bla-Bla.
 
 (defsystem "vse-gost/docs"
   :description "Зависимости для сборки документации"
-  :author "Nick Matvyeyev <mnasoft@gmail.com>"
+  :author "Mykola Matvyeyev <mnasoft@gmail.com>"
   :license "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 or later"  
   :depends-on ("vse-gost" "codex" "mnas-package")
   :components ((:module "src/docs"
