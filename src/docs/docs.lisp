@@ -11,17 +11,24 @@
 
 (defun make-document ()
   (loop
+    :for j :from 1
     :for i :in
     '((:vse-gost          :vse-gost)
       )
-    :do (apply #'mnas-package:document i)))
+    :do
+       (progn
+         (apply #'mnas-package:document i)
+         (format t "~A ~A~%" j i))))
 
 (defun make-graphs ()
   (loop
+    :for j :from 1
     :for i :in
     '(:vse-gost
       )
-    :do (mnas-package:make-codex-graphs i i)))
+    :do (progn
+          (mnas-package:make-codex-graphs i i)
+          (format t "~A ~A~%" j i))))
 
 (defun make-all (&aux
                    (of (if (find (uiop:hostname)
