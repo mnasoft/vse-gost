@@ -1,6 +1,6 @@
 ;;;; ./src/docs/docs.lisp
 
-(defpackage #:vse-gost/docs
+(defpackage :vse-gost/docs
   (:use #:cl ) 
   (:nicknames "VSE-GOST/DOCS")
   (:export make-all)

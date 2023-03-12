@@ -1,4 +1,4 @@
-(in-package #:vse-gost)
+(in-package :vse-gost)
 
 (declaim (optimize (debug 3)))
  

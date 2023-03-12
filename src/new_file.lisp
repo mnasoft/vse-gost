@@ -1,4 +1,4 @@
-(in-package #:vse-gost)
+(in-package :vse-gost)
  
 (defun tag-head(str &key (start 0))
   "Пример использования

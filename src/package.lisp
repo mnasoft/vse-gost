@@ -1,6 +1,6 @@
 ;;;; package.lisp
 
-(defpackage #:vse-gost
+(defpackage :vse-gost
   (:use #:cl)
   (:export main-create-PostgreSQL-import-file
 	   *vsegost-Catalog*

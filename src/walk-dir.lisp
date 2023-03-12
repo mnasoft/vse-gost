@@ -1,4 +1,4 @@
-(in-package #:vse-gost)
+(in-package :vse-gost)
 
 (defparameter *vsegost-Catalog* #p"/home/namatv/Downloads/vsegost.com/Catalog/"
               "@b(Описание:)
