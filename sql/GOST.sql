@@ -6,8 +6,8 @@ CREATE TABLE public.gost
   description text,                                             -- Краткиое описание Стандарта
   local_path text,                                              -- Путь к документу на локальном сервере.
   external_path text,                                           -- Путь к документу на удалённом сервере.
-  date date,
-  status text
+  date date,                                                    -- Год выпуска 
+  status text                                                   -- Действующий или нет
 )
 WITH (
   OIDS=FALSE

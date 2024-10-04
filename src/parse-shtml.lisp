@@ -17,6 +17,8 @@
 (defparameter *fn* "/home/namatv/Downloads/vsegost.com_1/Catalog/65/6548.shtml")
 (defparameter *fn* "/home/namatv/Downloads/vsegost.com_1/Catalog/29/2905.shtml")
 
+(defparameter *fn* "/home/mna/public_html/vsegost.com/Catalog/65/65408.shtml.html")
+
 (defun cat (file)
   (with-open-file (str file :direction :input)
     (do
@@ -26,7 +28,7 @@
      ((eql line 'eof) str-rez)
       (setf str-rez (concatenate 'string str-rez eol line)))))
 
-;;;;(cat *fn*)
+;;;;(format t "~A" (cat *fn*))
 
 (defun get-tag(tag str &key (start 0))
   "Выполняет разбор парного невложенного тега
