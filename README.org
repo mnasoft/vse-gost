@@ -91,7 +91,9 @@ cd ~/Downloads
 
 * Зеркалирование (bash)
 #+begin_src shell
-wget -m -np http://vsegost.com/
+  wget -m -np http://vsegost.com/
+  # wget -c -q --mirror --convert-links --adjust-extension --page-requisites --no-parent http://vsegost.com
+  # wget -с --mirror --convert-links --adjust-extension --page-requisites --no-parent --quiet --no-clobber --random-wait http://vsegost.com
 #+end_src
 
 * Настройка postgreSQL
