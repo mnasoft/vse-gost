@@ -1,0 +1,58 @@
+* [/] ToDo
+
+* Установить зависимости
+#+begin_src shell
+  pacman -S ucrt64/mingw-w64-ucrt-x86_64-imagemagick
+  pacman -S ucrt64/mingw-w64-ucrt-x86_64-postgresql
+#+end_src
+
+* POSTGRESQL
+** Начальная настройка
+*** Инициализация БД
+#+caption: Инициализация БД
+#+begin_src shell
+  # Самый простой вариант запуска
+  initdb -D /var/lib/postgres/data --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+
+  # Вариант запуска с локалью ru_RU.UTF-8
+  initdb --locale=ru_RU.UTF-8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+  # Вариант запуска с локалью ua_UA.UTF-8 - вариант неработоспособен
+  # initdb --locale=ua_UA.UTF-8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+#+end_src
+
+*** Удаление сервера каталога с БД
+#+caption: Удаление сервера каталога с БД
+#+begin_src shell
+  rm -r /var/lib/postgres/data
+#+end_src
+
+#+RESULTS:
+*** Запуск сервера БД
+#+caption: Запуск сервера БД в cmd
+#+begin_src cmd
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\pg_ctl" -D "D:/home/_namatv/PRG/msys64/var/lib/postgres/data" -l log.file start
+#+end_src
+
+#+caption: Запуск сервера БД в bash
+#+begin_src shell
+  pg_ctl -D /var/lib/postgres/data -l log.file start
+#+end_src
+
+*** Останов сервера БД 
+#+caption: Останов сервера БД в cmd
+#+begin_src cmd
+ "D:\home\_namatv\PRG\msys64\ucrt64\bin\pg_ctl" -D "D:/home/_namatv/PRG/msys64/var/lib/postgres/data" -l log.file stop 
+#+end_src
+
+#+caption: Запуск сервера БД в bash
+#+begin_src shell
+  pg_ctl -D /var/lib/postgres/data -l log.file stop
+#+end_src
+
+* Создание базы данных
+
+#+begin_src cmd
+  # Изменение кодировки на 1251
+  chcp 1251
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\psql" -d gost -U namatv
+#+end_src
