@@ -13,7 +13,7 @@
   	  d-lst (cdr d-lst)
 	  d-lst (append (uiop:subdirectories cur-dir) d-lst))))
 
-(defun main-create-bash-script-gif-pdf-convertion(vsegost-data-dir script-file-name))
+(defun main-create-bash-script-gif-pdf-convertion(vsegost-data-dir script-file-name)
   "Выполняет формирование файла скрипта для преобразования gif-файлов
  в файл gost.pdf для каждого каталога.
 
