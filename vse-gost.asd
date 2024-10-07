@@ -199,12 +199,9 @@ Bla-Bla-Bla.
   :depends-on ("cl-ppcre" "plump")
   :serial nil
   :components ((:module "src"
-		:serial t :components ((:file "package")
+		:serial t :components ((:file "vse-gost")
                                        (:file "parameter")
-                                       (:file "vse-gost")
-	                               (:file "parse-shtml")
-      	                               (:file "walk-dir")))))
-
+     	                               (:file "walk-dir")))))
 (defsystem "vse-gost/docs"
   :description "Зависимости для сборки документации"
   :author "Mykola Matvyeyev <mnasoft@gmail.com>"
@@ -213,9 +210,3 @@ Bla-Bla-Bla.
   :components ((:module "src/docs"
 		:serial nil
                 :components ((:file "docs")))))
-
-
-"
-
-
-"

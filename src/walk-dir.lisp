@@ -1,17 +1,5 @@
 (in-package :vse-gost)
 
-(defparameter *vsegost-Catalog* #p"/home/namatv/Downloads/vsegost.com/Catalog/"
-              "@b(Описание:)
-
-Каталог в файловой системе, куда отзеркалированы данные о ГОСТ.
-")
-
-(defparameter *vsegost-Data* #p"/home/namatv/Downloads/vsegost.com/Data/"
-	      "@b(Описание:)
-
-Каталог в файловой системе, куда отзеркалированы gif-файлы, содержащие отсканированные изображения ГОСТ.
-")
-
 (defun walk-subdirs (dir)
   "Возвращает список директорий начиная с директория dir.
 Пример использования
@@ -25,11 +13,21 @@
   	  d-lst (cdr d-lst)
 	  d-lst (append (uiop:subdirectories cur-dir) d-lst))))
 
-(defun main-create-bash-script-gif-pdf-convertion(vsegost-data-dir &optional (script-file-name #P"/home/namatv/out.sh"))
-  "Выполняет формирование файла скрипта для преобразования gif-файлов в файл gost.pdf для каждого каталога.
-vsegost-catalog-dir - расположение каталога vsegost.com/Catalog на зеркале сайта.
-Пример использования:
-(vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*)
+(defun main-create-bash-script-gif-pdf-convertion(vsegost-data-dir script-file-name))
+  "Выполняет формирование файла скрипта для преобразования gif-файлов
+ в файл gost.pdf для каждого каталога.
+
+ @b(Переменые:)
+@begin(list)
+ @item(vsegost-catalog-dir - расположение каталога vsegost.com/Catalog на зеркале сайта.)
+@end(list)
+
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+  (vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*
+                                                       #P\"/home/namatv/out.sh\")
+
+@end(code)
 "
   (with-open-file 
       (out script-file-name :direction :output :if-exists :supersede )
