@@ -1,37 +1,42 @@
 (in-package :vse-gost)
 
-(directory "/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html")
-(length (directory "/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html"))
+(ql:quickload :plump)
+
+(defparameter *files* (directory "/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html"))
+
 
 (defun designation (root-node)
   "Обозначение Стандарта"
-  (first 
-   (loop :for h1 :in (plump-dom:get-elements-by-tag-name root-node "h1")
-         :collect (plump:text (aref (plump:children h1) 0))
-         )))
+  (let* ((chdrn (plump:children
+               (first (plump-dom:get-elements-by-tag-name root-node "h1"))))
+       (ad (first (array-dimensions chdrn))))
+  (if (> ad 0) (plump:text (aref chdrn 0)) "")))
 
 (defun name (root-node)
   "Наименование Стандарта"
-  (first
-   (loop :for h2 :in (plump-dom:get-elements-by-tag-name root-node "h2")
-         :collect (plump:text (aref (plump:children h2) 0))
-         )))
+  (let* ((chdrn (plump:children
+                 (first (plump-dom:get-elements-by-tag-name root-node "h2"))))
+         (ad (first (array-dimensions chdrn))))
+    ;;(name root-node)
+    (if (> ad 0) (plump:text (aref chdrn 0)) "")))
 
 (defun description (root-node)
   "Краткиое описание Стандарта"
-  (first 
-   (loop :for p :in (plump-dom:get-elements-by-tag-name root-node "p")
-         :collect (plump:text (aref (plump:children p) 1)))))
+  (let* ((chdrn (plump:children
+                 (first
+                  (plump-dom:get-elements-by-tag-name root-node "p"))))
+         (ad (first (array-dimensions chdrn))))
+    (if (> ad 1) (plump:text (aref chdrn 1)) "")))
 
 (defun status (root-node)
   "Статус. Действующий или нет"
-  (first
-   (loop :for p :in (plump-dom:get-elements-by-tag-name root-node "p")
-         :collect (plump:text (aref (plump:children p) 0))
-         )))
+  (let* ((chdrn (plump:children
+                 (first (plump-dom:get-elements-by-tag-name root-node "p"))))
+         (ad (first (array-dimensions chdrn))))
+    (if (> ad 0) (plump:text (aref chdrn 0)) "")))
 
 (defun extract-date (string)
-  (cl-ppcre:register-groups-bind (result)
+  (ppcre:register-groups-bind (result)
       ("-(\\d*)$" string)
     (let ((year (parse-integer result)))
       (when (< year 99)  (incf year 1900))
@@ -63,16 +68,50 @@
   "external-path"
 )
 
-(defun out (root-node &optional (stream t))
+(defun print-record (root-node &optional (stream t))
+  "Записывает запись в файл."
   (format stream "~{~A~^	~}~%" (list 
-                         (local-path root-node)
-                         (designation root-node)
-                         (date root-node)
-                         (name root-node)
-                         (description root-node)
-                         (status root-node))))
+                                        (local-path root-node) ;; Проверено
+                                        (designation root-node) ;; Проверено
+                                        (date root-node) ;; Проверено
+                                        (name root-node) ;; Проверено
+                                        (description root-node) ;; Проверено
+                                        (status root-node) ;; Проверено
+                                       )))
 
-(with-open-file (stream "/home/mna/out.txt" :direction :output :if-exists :supersede)
-  (loop :for d :in (directory "/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html")
-        do 
-           (out d stream)))
+(defun out-file (f-name dir-template)
+  "
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+ (out-file \"/home/mna/out.txt\" \"/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html\")
+@end(code)
+"
+  (let ((start (get-universal-time)))
+  (with-open-file (stream f-name :direction :output :if-exists :supersede)
+    (loop :for d :in (directory dir-template)
+          :for i :from 0
+          :do
+             (format stream "~8D " i)
+             (print-record (plump:parse d) stream)))
+    (- (get-universal-time) start)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Участок для тестирования кода
+
+#+nil
+(let* ((root-node
+         (plump:parse
+          #P"/home/mna/public_html/vsegost.com/Catalog/60/60477.shtml.html"
+          ;;#P"/home/mna/public_html/vsegost.com/Catalog/60/60476.shtml.html" 
+          ))
+       (chdrn (plump:children
+               (first (plump-dom:get-elements-by-tag-name root-node "h1"))))
+       (ad (first (array-dimensions chdrn))))
+  (if (> ad 0) (plump:text (aref chdrn 0)) ""))
+
+#+nil 
+(loop :for d :in *files*
+      :for i :from 0
+      :do
+         (format t "~6D ~S " i d)
+         (out (plump:parse d) t))
