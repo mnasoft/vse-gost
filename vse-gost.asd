@@ -200,6 +200,7 @@ Bla-Bla-Bla.
   :serial nil
   :components ((:module "src"
 		:serial t :components ((:file "package")
+                                       (:file "parameter")
                                        (:file "vse-gost")
 	                               (:file "parse-shtml")
       	                               (:file "walk-dir")))))

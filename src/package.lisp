@@ -1,13 +1,8 @@
-;;;; package.lisp
+;;;; ./src/package.lisp
 
 (defpackage :vse-gost
   (:use #:cl)
-  (:export 
-	   *vsegost-Catalog*
-	   main-create-bash-script-gif-pdf-convertion
-	   *vsegost-Data*)
-  (:export create-html-vsegost)
-  (:export pth-Catalog->Data)
-  )
+  (:export *vsegost-Catalog* *vsegost-Data*
+	   main-create-bash-script-gif-pdf-convertion ))
 
 (in-package :vse-gost)
