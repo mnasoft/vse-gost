@@ -2,6 +2,8 @@
 
 (defparameter *files* (directory "/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html"))
 
+(create-sql-import-file "D:/home/_namatv/PRG/msys64/home/namatv/data-out.txt"
+                        "D:/home/_namatv/PRG/msys64/home/namatv/public_html/Catalog")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Участок для тестирования кода
