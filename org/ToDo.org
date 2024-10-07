@@ -11,13 +11,16 @@
 *** Инициализация БД
 #+caption: Инициализация БД
 #+begin_src shell
-  # Самый простой вариант запуска
-  initdb -D /var/lib/postgres/data --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+    # Самый простой вариант запуска
+    initdb -D /var/lib/postgres/data --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
 
-  # Вариант запуска с локалью ru_RU.UTF-8
-  initdb --locale=ru_RU.UTF-8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
-  # Вариант запуска с локалью ua_UA.UTF-8 - вариант неработоспособен
-  # initdb --locale=ua_UA.UTF-8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+    # Вариант запуска с локалью ru_RU.UTF-8 ru_RU.utf8
+    initdb --locale=ru_RU.UTF-8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+
+    initdb --locale=ru_RU.utf8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+
+    # Вариант запуска с локалью ua_UA.UTF-8 - вариант неработоспособен
+    # initdb --locale=ua_UA.UTF-8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
 #+end_src
 
 *** Удаление сервера каталога с БД
@@ -49,10 +52,22 @@
   pg_ctl -D /var/lib/postgres/data -l log.file stop
 #+end_src
 
-* Создание базы данных
+*** Создание базы данных под msys2
+1. Пересохранить файл [[../out.txt]] в кодировке 1251 под именем
+   [[../out1.txt]] при помощи nodepad.
 
-#+begin_src cmd
-  # Изменение кодировки на 1251
-  chcp 1251
-  "D:\home\_namatv\PRG\msys64\ucrt64\bin\psql" -d gost -U namatv
-#+end_src
+2. Выполнить в консоли cmd Windows следующий код
+   #+caption:  Изменение кодировки на 1251 и запуск интерпретатора команд
+   #+begin_src cmd
+     chcp 1251
+     "D:\home\_namatv\PRG\msys64\ucrt64\bin\psql" -d gost -U namatv
+   #+end_src
+3. Выполнить код из файла [[../sql/GOST.sql]].
+4. Выполнить команду
+   #+begin_src sql
+     copy gost (local_path, designation, date, name, description, status)
+     from
+     'D:/home/_namatv/PRG/msys64/home/namatv/quicklisp/local-projects/clisp/vse-gost/out1.txt';
+   #+end_src
+
+   
