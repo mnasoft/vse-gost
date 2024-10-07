@@ -196,7 +196,7 @@ Bla-Bla-Bla.
 
   :author "Mykola Matvyeyev <mnasoft@gmail.com>"
   :license "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 or later"  
-  :depends-on (#:cl-ppcre)
+  :depends-on ("cl-ppcre" "plump")
   :serial nil
   :components ((:module "src"
 		:serial t :components ((:file "package")

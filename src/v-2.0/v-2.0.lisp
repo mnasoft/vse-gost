@@ -79,11 +79,28 @@
                                         (status root-node) ;; Проверено
                                        )))
 
-(defun out-file (f-name dir-template)
-  "
+(defun create-sql-import-file (f-name vsegost-catalog-dir
+                               &aux
+                                 (dir-template
+                                  (concatenate 'string
+                                               vsegost-catalog-dir
+                                               "/*/*.shtml.html")))
+  "@b(Описание:)
+@b(create-sql-import-file) выполняет формирование файла для
+ импортирования таблицы ГОСТ в PostgreSQL.
+
+@b(Переменые:)
+@begin(list)
+ @item(vsegost-catalog-dir - расположение каталога vsegost.com/Catalog
+на зеркале сайта;)
+ @item(f-name - имя файла, в который выводится информация с данными
+ для формирования таблицы, содержащей информацию о ГОСТ.)
+@end(list)
+
  @b(Пример использования:)
 @begin[lang=lisp](code)
- (out-file \"/home/mna/out.txt\" \"/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html\")
+ (create-sql-import-file \"/home/namatv/out.txt\"
+                         \"/home/namatv/public_html/vsegost.com/Catalog\")
 @end(code)
 "
   (let ((start (get-universal-time)))

@@ -25,39 +25,6 @@
   	  d-lst (cdr d-lst)
 	  d-lst (append (uiop:subdirectories cur-dir) d-lst))))
 
-(defun walk-subdirs-files(dir)
-  "Возвращает список файлов, расположенных в директориях вложенных в директорий dir.
-Пример использования:
-(walk-subdirs-files \"/home/namatv/My/developer/\")
-"
-  (apply #'append (mapcar #'uiop:directory-files (walk-subdirs dir))))
-
-
-(defun main-create-PostgreSQL-import-file (vsegost-catalog-dir &optional (import-file-name #P"/home/namatv/out.txt"))
-  "
-@b(Описание:)
-@b(main-create-PostgreSQL-import-file) выполняет формирование файла для импортирования таблицы ГОСТ в PostgreSQL.
-
-@b(Переменые:)
-@begin(list)
- @item(vsegost-catalog-dir - расположение каталога vsegost.com/Catalog на 
-зеркале сайта;)
- @item(import-file-name    - имя файла, в который выводится информация с данными для формирования таблицы, содержащей информацию о ГОСТ.)
-@end(list)
-
-@b(Пример использования:)
-@begin[lang=lisp](code)
- (vse-gost:main-create-PostgreSQL-import-file vse-gost:*vsegost-Catalog*)
-@end(code)
-"
-
-  (with-open-file 
-      (out import-file-name :direction :output :if-exists :supersede )
-    (mapc 
-     #'(lambda (fn) 
-	 (convert-to-postgres (parse-vsegost-shtml fn) out))
-     (walk-subdirs-files vsegost-catalog-dir))))
-
 (defun main-create-bash-script-gif-pdf-convertion(vsegost-data-dir &optional (script-file-name #P"/home/namatv/out.sh"))
   "Выполняет формирование файла скрипта для преобразования gif-файлов в файл gost.pdf для каждого каталога.
 vsegost-catalog-dir - расположение каталога vsegost.com/Catalog на зеркале сайта.
