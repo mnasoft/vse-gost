@@ -2,9 +2,11 @@
 
 (defpackage :vse-gost
   (:use #:cl)
-  (:export *vsegost-Catalog* *vsegost-Data*
+  (:export *vsegost-Catalog*
+           *vsegost-Data*
 	   main-create-bash-script-gif-pdf-convertion
            create-sql-import-file
+           create-gif-to-pdf
            ))
 
 (in-package :vse-gost)
@@ -117,3 +119,29 @@
     (- (get-universal-time) start)))
 
 
+
+
+(defun gif-to-pdf (fname &optional (stream t))
+  " (gif-to-pdf #P\"/home/mna/public_html/vsegost.com/Catalog/10/10047.shtml.html\")
+"
+  (let* ((catalog (uiop:pathname-directory-pathname fname))
+         (data (local-path (plump:parse fname))))
+    (when data
+      (format stream "cd ~A~%" (cl-fad:merge-pathnames-as-directory catalog data))
+      (format stream "magick  *.gif gost.pdf~%"))))
+
+(defun create-gif-to-pdf (f-name vsegost-catalog-dir
+                               &aux
+                                 (dir-template
+                                  (concatenate 'string
+                                               vsegost-catalog-dir
+                                               "*/*.shtml.html")))
+
+  (let ((start (get-universal-time)))
+  (with-open-file (stream f-name :direction :output :if-exists :supersede)
+    (loop :for d :in (directory dir-template)
+          :do
+             (gif-to-pdf d stream))
+    (- (get-universal-time) start))))
+
+;;(create-gif-to-pdf "/home/mna/12345.sh" (namestring *vsegost-catalog*))
