@@ -118,17 +118,24 @@
              (print-record (plump:parse d) stream)))
     (- (get-universal-time) start)))
 
-
-
-
 (defun gif-to-pdf (fname &optional (stream t))
   " (gif-to-pdf #P\"/home/mna/public_html/vsegost.com/Catalog/10/10047.shtml.html\")
 "
-  (let* ((catalog (uiop:pathname-directory-pathname fname))
-         (data (local-path (plump:parse fname))))
-    (when data
-      (format stream "cd ~A~%" (cl-fad:merge-pathnames-as-directory catalog data))
-      (format stream "magick  *.gif gost.pdf~%"))))
+  (let ((catalog (uiop:pathname-directory-pathname fname))
+        (root (plump:parse fname)))
+    (let ((data (local-path root))
+          (gifs (mapcar
+                 #'(lambda (el)
+                     (pathname-name
+                      (pathname el)))
+                 (gifs root))))
+      (when data
+        (format stream "cd ~A~%"
+                (concatenate 'string
+                             (namestring catalog)
+                             data))
+        (format stream "echo \"$PWD\"~%")
+        (format stream "magick  ~{~A.gif ~}gost.pdf~%" gifs)))))
 
 (defun create-gif-to-pdf (f-name vsegost-catalog-dir
                                &aux
