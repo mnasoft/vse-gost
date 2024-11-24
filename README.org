@@ -32,6 +32,7 @@
 * Назначение
 Проект предназначен для разбора информации о ГОСТ, размещенной на
 сайте [[http://vsegost.com]]
+
 * Зависимости
 Для ковертирования файлов с расширением gif в файлы с расширением pdf
 используется соманда *convert*.
@@ -97,13 +98,23 @@ cd ~/Downloads
 #+end_src
 
 * Настройка postgreSQL
-** Для создания файла импорта '/home/namatv/out.txt' в PostgreSQL выполнте следующее:
+
+** Для создания файла импорта '/home/mna/out.txt' в PostgreSQL выполнте следующее:
    
 #+begin_src lisp
-(vse-gost:main-create-PostgreSQL-import-file vse-gost:*vsegost-Catalog*)
+  (in-package :vse-gost)
+
+  (create-sql-import-file
+   (concatenate 'string
+                (uiop:getenv "HOME")
+                "/"
+                "out.txt")
+   (namestring  *vsegost-Catalog*))
 #+end_src
 
-** Для создания файла скрипта, преобразующего gif-файлы каждого каталога в  файл gost.pdf
+** Преобразование gif-файлов gost.pdf
+
+Для создания файла скрипта, преобразующего gif-файлы каждого каталога в  файл gost.pdf
 
 #+begin_src lisp
 (vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*)
