@@ -1,37 +1,8 @@
-#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
-#+options: author:t broken-links:nil c:nil creator:nil
-#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
-#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
-#+options: timestamp:t title:t toc:t todo:t |:t
-#+title: README
-#+date: <2021-09-29 Ср>
-#+author:
-#+email: namatv@gmail.com
-#+language: en
-#+select_tags: export
-#+exclude_tags: noexport
-#+creator: Emacs 27.2 (Org mode 9.4.4)
-#+options: html-link-use-abs-url:nil html-postamble:auto
-#+options: html-preamble:t html-scripts:t html-style:t
-#+options: html5-fancy:nil tex:t
-#+html_doctype: xhtml-strict
-#+html_container: div
-#+description:
-#+keywords:
-#+html_link_home:
-#+html_link_up:
-#+html_mathjax:
-#+html_equation_reference_format: \eqref{%s}
-#+html_head:
-#+html_head_extra:
-#+subtitle:
-#+infojs_opt:
-#+creator: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.4)
-#+latex_header:
 
 * Назначение
 Проект предназначен для разбора информации о ГОСТ, размещенной на
-сайте [[http://vsegost.com]]
+сайте [[http://vsegost.com]]. В результате разбора можно сформировать
+файл, предназначенный для импорта в базу данных.
 
 * Зависимости
 Для ковертирования файлов с расширением gif в файлы с расширением pdf
@@ -44,18 +15,19 @@ sudo apt install graphicsmagick-imagemagick-compat
 Информация о ГОСТ, размещенная на сайте vsegost.com, содержится в
 нескольких каталогах:
 #+begin_src shell
-  ls ~/Downloads/2015-12-21-vsegost.com
+  find ~/public_html/vsegost.com -maxdepth 1 -type d
 #+end_src
 
 #+RESULTS:
-| Catalog     |
-| Categories  |
-| css         |
-| Data        |
-| DataTN      |
-| index.html  |
-| js          |
-| NCategories |
+| /home/mna/public_html/vsegost.com             |
+| /home/mna/public_html/vsegost.com/js          |
+| /home/mna/public_html/vsegost.com/Data        |
+| /home/mna/public_html/vsegost.com/Catalog     |
+| /home/mna/public_html/vsegost.com/icons       |
+| /home/mna/public_html/vsegost.com/Categories  |
+| /home/mna/public_html/vsegost.com/DataTN      |
+| /home/mna/public_html/vsegost.com/css         |
+| /home/mna/public_html/vsegost.com/NCategories |
 
 ** Catalog
 В подкаталогах директория Catalog хранятся файлы с расширением *.shtm,
@@ -71,7 +43,9 @@ sudo apt install graphicsmagick-imagemagick-compat
 * Цели:
 - Разбор содержимого зеркалированного сайта vsegost.com и формирование
   базы данных ГОСТ;
-- Конвертирование gif-файлов в формат pdf.
+- Конвертирование gif-файлов в формат pdf - можно выполнить сторонней
+  утилитой gif_to_pdf.sh из пакета
+  [[https://github.com/mnasoft/convert_git_to_pdf/]].
 - Создание сайта, содержащего pdf ГОСТов.
 
 * Проект vse-gost предназначен для:
@@ -87,41 +61,60 @@ sudo apt install graphicsmagick-imagemagick-compat
 
 ** Переход в рабочий каталог для зеркалирования (bash)
 #+begin_src shell
-cd ~/Downloads
+cd ~/public_html
 #+end_src
 
 * Зеркалирование (bash)
 #+begin_src shell
-  wget -m -np http://vsegost.com/
+  # wget -m -np http://vsegost.com/
   # wget -c -q --mirror --convert-links --adjust-extension --page-requisites --no-parent http://vsegost.com
-  # wget -с --mirror --convert-links --adjust-extension --page-requisites --no-parent --quiet --no-clobber --random-wait http://vsegost.com
+  wget -с --mirror --convert-links --adjust-extension --page-requisites --no-parent --quiet --no-clobber --random-wait http://vsegost.com
 #+end_src
 
 * Настройка postgreSQL
 
-** Для создания файла импорта '/home/mna/out.txt' в PostgreSQL выполнте следующее:
+** Для создания файла импорта в PostgreSQL выполнте следующее:
    
 #+begin_src lisp
   (in-package :vse-gost)
 
-  (create-sql-import-file
-   (concatenate 'string
+  (defparameter *files*
+    (directory
+     "/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html")
+    "Список файлов, в которых присутствует информация о ГОСТ."
+    )
+
+  (defparameter *out-file*
+     (concatenate 'string
                 (uiop:getenv "HOME")
                 "/"
-                "out.txt")
-   (namestring  *vsegost-Catalog*))
+                "out.txt"))
+
+  (create-sql-import-file *out-file* (namestring *vsegost-Catalog*))
+
+  (list (list "out-file" *out-file*)
+        (list "vsegost-Catalog" (namestring *vsegost-Catalog*))
+        (list "vsegost-Data" (namestring *vsegost-Data*))
+        (list "GOST number" (length *files*)))
 #+end_src
 
-** Преобразование gif-файлов gost.pdf
+#+RESULTS:
+| out-file        | /home/mna/out.txt                          |
+| vsegost-Catalog | /home/mna/public_html/vsegost.com/Catalog/ |
+| vsegost-Data    | /home/mna/public_html/vsegost.com/Data/    |
+| GOST number     | 48371                                      |
 
-Для создания файла скрипта, преобразующего gif-файлы каждого каталога в  файл gost.pdf
+** TODO Преобразование gif-файлов gost.pdf
+
+Для создания файла скрипта, преобразующего gif-файлы каждого каталога
+в файл gost.pdf
 
 #+begin_src lisp
 (vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*)
 #+end_src
 Примечание: Примерное время выполнения сценария 5 минут.
 
-** Примеры переноса файлов на сервер
+** TODO Примеры переноса файлов на сервер
 #+begin_src shell
 rsync -avzh --progress /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
 
@@ -132,29 +125,29 @@ rsync -avzh --progress /home/namatv/out.txt root@192.168.0.110:/home/namatv/
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-* Создание базы данных gost на удаленом сервере mnasoft-pi для пользователя namatv
-
-** Переходим в запись postgres
+* Создание базы данных gost
+** Сервере mnasoft-pi для пользователя namatv
+*** Переходим в запись postgres
 #+begin_src shell
 namatv@mnasoft-pi:~$ sudo su - postgres
 #+end_src
 
-** Создаем роль namatv
+*** Создаем роль namatv
 #+begin_src shell
-postgres@mnasoft-pi:~$ createuser -dsRP namatv
+  postgres@mnasoft-pi:~$ createuser -dsRP namatv
 #+end_src
 
-** Создаем для владельца namatv базу gost
+*** Создаем для владельца namatv базу gost
 #+begin_src shell   
 namatv@mnasoft-pi:~$ createdb -O namatv gost
 #+end_src
 
-** Входим в консоль postgresql
+*** Входим в консоль postgresql
 #+begin_src shell 
 namatv@mnasoft-pi:~$ psql -d gost -U namatv
 #+end_src
 
-** Создаем таблицу gost
+*** Создаем таблицу gost
 #+begin_src sql
 gost=# 
 CREATE TABLE public.gost
@@ -180,7 +173,7 @@ COMMENT ON COLUMN public.gost.description IS   'Краткиое описани�
 COMMENT ON COLUMN public.gost.local_path IS    'Путь к документу на локальном сервере.';
 COMMENT ON COLUMN public.gost.external_path IS 'Путь к документу на удалённом сервере.';
 #+end_src
-** Импортируем содержимое таблицы gost из файла:
+*** Импортируем содержимое таблицы gost из файла:
 #+begin_src sql   
   gost=# 
   copy gost (local_path, designation, date, name, description, status)
@@ -188,4 +181,84 @@ COMMENT ON COLUMN public.gost.external_path IS 'Путь к документу �
   copy gost (local_path, designation, date, name, description, status)
   from 'D:\PRG\msys32\home\namatv\quicklisp\local-projects\clisp\vse-gost\out_1.txt';
 #+end_src
+** Сервере mnasoft-02 для пользователя mna
+
+*** Проверяем работу сервиса postgresql.service
+Проверяем работу сервиса
+
+#+begin_src shell
+  systemctl status postgresql.service
+#+end_src
+
+#+begin_src shell
+  sudo -iu postgres
+  initdb --locale=ru_RU.UTF-8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+#+end_src
+
+*** Запускаем postgresql.service
+
+#+begin_src shell
+  sudo systemctl enable postgresql.service
+  sudo systemctl start  postgresql.service
+#+end_src
+
+*** Создаем роль mna
+#+begin_src shell
+  sudo -iu postgres
+  createuser -dsRP mna 
+#+end_src
+
+*** Создаем БД
+
+#+begin_src shell
+  sudo -iu mna
+  createdb -O mna gost
+#+end_src
+
+*** Входим в консоль postgresql
+#+begin_src shell
+  sudo -iu mna
+  psql -d gost -U mna
+#+end_src
+
+*** Создаем таблицу gost
+В базе данных gost создаем таблицу gost.
+
+Примечание: поле external_path - удалено. 
+
+#+begin_src sql
+  CREATE TABLE public.gost
+  (
+    id serial PRIMARY KEY,  -- Идентификатор записи;
+    designation text,       -- Обозначение Стандарта;
+    name text,              -- Наименование Стандарта;
+    description text,       -- Краткиое описание Стандарт;
+    local_path text,        -- Путь к документу на локальном сервере;
+    date date,              -- Дата;
+    status text             -- Дествует или нет.
+  )
+  WITH (
+    OIDS=FALSE
+  );
+
+  ALTER TABLE public.gost OWNER TO mna;
+
+  COMMENT ON COLUMN public.gost.id IS            'Идентификатор записи.';
+
+  COMMENT ON COLUMN public.gost.designation IS   'Обозначение Стандарта';
+
+  COMMENT ON COLUMN public.gost.name IS          'Наименование Стандарта';
+
+  COMMENT ON COLUMN public.gost.description IS   'Краткиое описание Стандарта';
+
+  COMMENT ON COLUMN public.gost.local_path IS    'Путь к документу на локальном сервере';
+#+end_src
+
+*** Импортируем содержимое таблицы gost из файла:
+
+#+begin_src sql   
+  \copy gost (local_path, designation, date, name, description, status)
+  from '/home/mna/out.txt';       
+#+end_src
+
 * Запуск веб на удаленном сервере
