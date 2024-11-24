@@ -3,23 +3,60 @@
 (defpackage :vse-gost
   (:use #:cl)
   (:export *vsegost-Catalog*
-           *vsegost-Data*
-	   main-create-bash-script-gif-pdf-convertion
-           create-sql-import-file
-           create-gif-to-pdf
+           *vsegost-Data*)
+  (:intern  designation
+            name
+            description
+            status
+            extract-date
+            date
+            gifs
+            local-path
+            print-record
+            )
+  (:export create-sql-import-file
            ))
 
 (in-package :vse-gost)
 
 (defun designation (root-node)
-  "Обозначение Стандарта"
+  "@b(Описание:) функция @b(designation) возвращает обозначение
+ стандарта.
+
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+  (let* ((files 
+           (directory
+            (concatenate 'string 
+                         (namestring *vsegost-Catalog*)
+                         \"*/*.shtml.html\")))
+         (n (random (length files)))
+         (root-node 
+           (plump:parse (nth n files))))
+    (designation root-node))
+@end(code)
+"
   (let* ((chdrn (plump:children
                (first (plump-dom:get-elements-by-tag-name root-node "h1"))))
        (ad (first (array-dimensions chdrn))))
   (if (> ad 0) (plump:text (aref chdrn 0)) "")))
 
 (defun name (root-node)
-  "Наименование Стандарта"
+  "@b(Описание:) функция @b(name) возвращает наименование стандарта.
+
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+  (let* ((files 
+           (directory
+            (concatenate 'string 
+                         (namestring *vsegost-Catalog*)
+                         \"*/*.shtml.html\")))
+         (n (random (length files)))
+         (root-node 
+           (plump:parse (nth n files))))
+    (name root-node))
+@end(code)
+"
   (let* ((chdrn (plump:children
                  (first (plump-dom:get-elements-by-tag-name root-node "h2"))))
          (ad (first (array-dimensions chdrn))))
@@ -27,7 +64,20 @@
     (if (> ad 0) (plump:text (aref chdrn 0)) "")))
 
 (defun description (root-node)
-  "Краткиое описание Стандарта"
+  "@b(Описание:) функция @b(name) возвращает краткиое описание стандарта.
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+  (let* ((files 
+           (directory
+            (concatenate 'string 
+                         (namestring *vsegost-Catalog*)
+                         \"*/*.shtml.html\")))
+         (n (random (length files)))
+         (root-node 
+           (plump:parse (nth n files))))
+    (description root-node))
+@end(code)
+"
   (let* ((chdrn (plump:children
                  (first
                   (plump-dom:get-elements-by-tag-name root-node "p"))))
@@ -35,7 +85,20 @@
     (if (> ad 1) (plump:text (aref chdrn 1)) "")))
 
 (defun status (root-node)
-  "Статус. Действующий или нет"
+  "@b(Описание:) функция @b(name) возвращает статус стандарта (действующий или нет).
+
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+  (let* ((files 
+           (directory
+            (concatenate 'string 
+                         (namestring *vsegost-Catalog*)
+                         \"*/*.shtml.html\")))
+         (n (random (length files)))
+         (root-node 
+           (plump:parse (nth n files))))
+    (status root-node))
+@end(code)"
   (let* ((chdrn (plump:children
                  (first (plump-dom:get-elements-by-tag-name root-node "p"))))
          (ad (first (array-dimensions chdrn))))
@@ -49,33 +112,79 @@
       (format nil "~A-06-01" year))))
 
 (defun date (root-node)
-  "Год выпуска"
+  "@b(Описание:) функция @b(name) возвращает год выпуска.
+
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+  (let* ((files 
+           (directory
+            (concatenate 'string 
+                         (namestring *vsegost-Catalog*)
+                         \"*/*.shtml.html\")))
+         (n (random (length files)))
+         (root-node 
+           (plump:parse (nth n files))))
+    (date root-node))
+@end(code)"
   (labels ()
  (extract-date  (designation root-node))))
 
 (defun gifs (root-node)
-  "Относительные пути к сканированным страницам"
-  ;; gif-файлы
+  "@b(Описание:) функция @b(name) возвращает относительные пути к
+ сканированным страницам.
+
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+  (let* ((files 
+           (directory
+            (concatenate 'string 
+                         (namestring *vsegost-Catalog*)
+                         \"*/*.shtml.html\")))
+         (n (random (length files)))
+         (root-node 
+           (plump:parse (nth n files))))
+    (gifs root-node))
+@end(code)"
   (loop :for a :in (plump-dom:get-elements-by-tag-name root-node "a")
         :when (ppcre:scan "\\.\\./\\.\\./Data/" (plump:attribute a "href"))
           :collect
           (plump:attribute a "href")))
 
-
-(defun remove-after-last-slash (str)
-  (cl-ppcre:regex-replace-all "/[^/]*$" str "/"))
-
 (defun local-path (root-node)
-  "Путь к документу на локальном сервере"
-  (remove-after-last-slash (first (gifs root-node))))
+  "@b(Описание:) функция @b(name) возвращает путь к документу на
+локальном сервере.
 
-(defun external-path (root-node)
-  "Путь к документу на локальном сервере"
-  "external-path"
-)
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+  (let* ((files 
+           (directory
+            (concatenate 'string 
+                         (namestring *vsegost-Catalog*)
+                         \"*/*.shtml.html\")))
+         (n (random (length files)))
+         (root-node 
+           (plump:parse (nth n files))))
+    (local-path root-node))
+@end(code)"
+  (ppcre:regex-replace-all "^\\.\\./\\.\\./Data/|/[^/]*$"
+                              (first (gifs root-node))
+                              ""))
 
 (defun print-record (root-node &optional (stream t))
-  "Записывает запись в файл."
+  "@b(Описание:) функция @b(name) записывает запись в поток @b(stream).
+
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+  (let* ((files 
+           (directory
+            (concatenate 'string 
+                         (namestring *vsegost-Catalog*)
+                         \"*/*.shtml.html\")))
+         (n (random (length files)))
+         (root-node 
+           (plump:parse (nth n files))))
+    (print-record root-node))
+@end(code)"
   (format stream "~{~A~^	~}~%" (list 
                                         (local-path root-node) ;; Проверено
                                         (designation root-node) ;; Проверено
@@ -97,10 +206,11 @@
 
 @b(Переменые:)
 @begin(list)
- @item(vsegost-catalog-dir - расположение каталога vsegost.com/Catalog
-на зеркале сайта;)
  @item(f-name - имя файла, в который выводится информация с данными
  для формирования таблицы, содержащей информацию о ГОСТ.)
+ @item(vsegost-catalog-dir - расположение каталога vsegost.com/Catalog
+на зеркале сайта;)
+
 @end(list)
 
  @b(Пример использования:)
@@ -118,37 +228,29 @@
              (print-record (plump:parse d) stream)))
     (- (get-universal-time) start)))
 
-(defun gif-to-pdf (fname &optional (stream t))
-  " (gif-to-pdf #P\"/home/mna/public_html/vsegost.com/Catalog/10/10047.shtml.html\")
-"
-  (let ((catalog (uiop:pathname-directory-pathname fname))
-        (root (plump:parse fname)))
-    (let ((data (local-path root))
-          (gifs (mapcar
-                 #'(lambda (el)
-                     (pathname-name
-                      (pathname el)))
-                 (gifs root))))
-      (when data
-        (format stream "cd ~A~%"
-                (concatenate 'string
-                             (namestring catalog)
-                             data))
-        (format stream "echo \"$PWD\"~%")
-        (format stream "magick  ~{~A.gif ~}gost.pdf~%" gifs)))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun create-gif-to-pdf (f-name vsegost-catalog-dir
-                               &aux
-                                 (dir-template
-                                  (concatenate 'string
-                                               vsegost-catalog-dir
-                                               "*/*.shtml.html")))
+(format t "~A" "ИНСТРУКЦИЯ
 
-  (let ((start (get-universal-time)))
-  (with-open-file (stream f-name :direction :output :if-exists :supersede)
-    (loop :for d :in (directory dir-template)
-          :do
-             (gif-to-pdf d stream))
-    (- (get-universal-time) start))))
+1. Переход в рабочий каталог для зеркалирования (bash)
+cd ~/Downloads
 
-;;(create-gif-to-pdf "/home/mna/12345.sh" (namestring *vsegost-catalog*))
+2. Зеркалирование (bash)
+wget -m -np http://vsegost.com/
+
+3. Для создания файла импорта '/home/namatv/out.txt' в PostgreSQL выполнте следующее:
+(vse-gost:create-sql-import-file
+ (concatenate 'string
+              (uiop:getenv \"HOME\")
+              \"/\"
+              \"import-file.txt\")
+ (namestring  vse-gost:*vsegost-Catalog*))
+
+3.1 Для импорта в PostgreSQL выполнте в psql следующее:
+copy gost (local_path, designation, date, name, description, status) from '/home/namatv/out.txt';
+
+4. Для создания файла скрипта, преобразующего gif-файлы каждого каталога в  файл gost.pdf.
+(vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*)
+
+Примечание: Примерное время выполнения сценария 5 минут.
+" )

@@ -1,9 +1,30 @@
 (in-package :vse-gost)
 
-(defparameter *files* (directory "/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html"))
+*vsegost-Catalog*  ; => #P"/home/mna/public_html/vsegost.com/Catalog/"
 
-(create-sql-import-file "D:/home/_namatv/PRG/msys64/home/namatv/data-out.txt"
-                        "D:/home/_namatv/PRG/msys64/home/namatv/public_html/Catalog")
+*vsegost-Data* ; => #P"/home/mna/public_html/vsegost.com/Data/"
+
+
+(defparameter *files*
+  (directory
+   "/home/mna/public_html/vsegost.com/Catalog/*/*.shtml.html")
+  "Список файлов, в которых расположенаа информация о ГОСТ."
+  )
+
+(length *files*)  ; => 48371 (16 bits, #xBCF3)
+
+
+(defparameter *out-file*
+  (concatenate 'string 
+               (uiop:getenv "HOME") "/" "data-out.txt")
+  
+  )
+
+*out-file* ; => "/home/mna/data-out.txt"
+
+
+(create-sql-import-file *out-file* (namestring *vsegost-Catalog*))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Участок для тестирования кода

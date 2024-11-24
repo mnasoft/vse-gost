@@ -1,4 +1,8 @@
-* [/] ToDo
+* [1/1] ToDo
+1. [X] Удалить функции
+   - [X] gif-to-pdf
+   - [X] create-gif-to-pdf
+     
 
 * Установить зависимости
 #+begin_src shell
