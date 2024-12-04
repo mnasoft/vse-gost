@@ -1,0 +1,118 @@
+* Сервере n133906 для пользователя namatv
+** Каталог с данными
+[[file:d:/home/_namatv/public_html/Site/GOST-2023/]]
+
+#+begin_src lisp
+  (ql:quickload :vse-gost)
+
+  (in-package :vse-gost)
+
+  (defparameter *files*
+    (directory
+     "d:/home/_namatv/public_html/Site/GOST-2023/Catalog/*/*.shtml.html")
+    "Список файлов, в которых присутствует информация о ГОСТ."
+    )
+
+  (defparameter *out-file*
+     (concatenate 'string
+                (uiop:getenv "HOME")
+                "/"
+                "out.txt"))
+
+  (defparameter *vsegost-Catalog*
+    (uiop:directory-exists-p
+     "d:/home/_namatv/public_html/Site/GOST-2023/Catalog/")
+    "@b(Описание:) Каталог в файловой системе, куда отзеркалированы данные
+  о ГОСТ.")
+
+  (create-sql-import-file *out-file* (namestring *vsegost-Catalog*))
+
+  (list (list "out-file" *out-file*)
+        (list "vsegost-Catalog" (namestring *vsegost-Catalog*))
+        (list "vsegost-Data" (namestring *vsegost-Data*))
+        (list "GOST number" (length *files*)))
+#+end_src
+
+** Установить зависимости
+#+begin_src shell
+  pacman -S ucrt64/mingw-w64-ucrt-x86_64-imagemagick
+  pacman -S ucrt64/mingw-w64-ucrt-x86_64-postgresql
+#+end_src
+
+** Создаем базу данных
+#+begin_src shell
+  initdb --locale=ru_RU.UTF-8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+#+end_src
+
+Готово. Теперь вы можете запустить сервер баз данных:
+
+** Запускаем сервер баз данных
+#+begin_src cmd
+  chcp 1251
+  D:\home\_namatv\PRG\msys64\ucrt64\bin\pg_ctl -D D:/home/_namatv/PRG/msys64/var/lib/postgres/data -l log_file start
+#+end_src
+
+** Пример останова сервера баз данных
+#+begin_src cmd
+  chcp 1251
+  D:\home\_namatv\PRG\msys64\ucrt64\bin\pg_ctl -D D:/home/_namatv/PRG/msys64/var/lib/postgres/data -l log_file stop
+#+end_src
+
+** Создаем БД
+
+#+begin_src shell
+  chcp 1251
+  D:\home\_namatv\PRG\msys64\ucrt64\bin\createdb gost
+#+end_src
+
+** Входим в консоль postgresql
+#+begin_src shell
+  D:\home\_namatv\PRG\msys64\ucrt64\bin\psql -d gost
+#+end_src
+
+** Создаем таблицу gost
+В базе данных gost создаем таблицу gost.
+
+Примечание: поле external_path - удалено. 
+
+#+begin_src sql
+  CREATE TABLE public.gost
+  (
+    id serial PRIMARY KEY,  -- Идентификатор записи;
+    designation text,       -- Обозначение Стандарта;
+    name text,              -- Наименование Стандарта;
+    description text,       -- Краткиое описание Стандарт;
+    local_path text,        -- Путь к документу на локальном сервере;
+    date date,              -- Дата;
+    status text             -- Дествует или нет.
+  )
+  WITH (
+    OIDS=FALSE
+  );
+
+  ALTER TABLE public.gost OWNER TO mna;
+
+  COMMENT ON COLUMN public.gost.id IS            'Идентификатор записи.';
+
+  COMMENT ON COLUMN public.gost.designation IS   'Обозначение Стандарта';
+
+  COMMENT ON COLUMN public.gost.name IS          'Наименование Стандарта';
+
+  COMMENT ON COLUMN public.gost.description IS   'Краткиое описание Стандарта';
+
+  COMMENT ON COLUMN public.gost.local_path IS    'Путь к документу на локальном сервере';
+#+end_src
+
+** Перекодируем файл out.txt
+1.) Открываем в notepad.
+2.) Сохраняем в кодировке ANSI.
+
+** Импортируем содержимое таблицы gost из файла:
+
+#+begin_src sql   
+  copy gost (local_path, designation, date, name, description, status) from 'D:\home\_namatv\PRG\msys64\home\namatv\out_1.txt';
+#+end_src
+
+* Последующие действия
+См. проект mnas-web.
+

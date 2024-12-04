@@ -4,11 +4,6 @@
    - [X] create-gif-to-pdf
      
 
-* Установить зависимости
-#+begin_src shell
-  pacman -S ucrt64/mingw-w64-ucrt-x86_64-imagemagick
-  pacman -S ucrt64/mingw-w64-ucrt-x86_64-postgresql
-#+end_src
 
 * POSTGRESQL
 ** Начальная настройка
