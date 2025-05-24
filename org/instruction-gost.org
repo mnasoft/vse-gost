@@ -11,6 +11,6 @@
      psql -d gost -U mna
    #+end_src
 
-3. Создаем таблицу gost в БД gost (gost=#) см. файл [[file:~/quicklisp/local-projects/clisp/vse-gost/sql/GOST.sql][GOST.sql]]
+3. Создаем таблицу gost в БД gost (gost=#) см. файл [[../sql/GOST.sql][GOST.sql]]
 
-4. Импортируем содержимое таблицы gost БД gost (gost=#) см файл [[file:~/quicklisp/local-projects/clisp/vse-gost/sql/copy.sql][copy.sql]]
+4. Импортируем содержимое таблицы gost БД gost (gost=#) см файл [[../sql/copy.sql][copy.sql]]
