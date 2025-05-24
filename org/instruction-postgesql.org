@@ -1,0 +1,35 @@
+* Настройка PostgreSql
+1. [ ] Установка
+   #+begin_src shell
+     sudo pacman -S postgresql
+   #+end_src
+2. [ ] Переходим в запись postgres
+   #+begin_src shell
+     sudo -s -u postgres
+   #+end_src
+3. [ ] Инициализируем кластер базы данных
+   #+begin_src shell
+     initdb -D /var/lib/postgres/data
+   #+end_src
+
+3. [ ] Разрешаем и запускаем сервер баз данных 
+   #+begin_src shell
+     # Разрешаем
+     sudo systemctl enable postgresql
+
+     # Запускаем
+     sudo systemctl start postgresql
+
+     # Иной вариант запуска
+     # pg_ctl -D /var/lib/postgres/data -l файл_журнала start
+   #+end_src
+
+4. [ ] Создаем роль mna из-под пользователя postgres@mnasoft-00
+   #+begin_src shell
+     createuser -dsRP mna
+     # -d, --createdb            роль с правом создания баз данных
+     # -s, --superuser           роль с полномочиями суперпользователя
+     # -R, --no-createrole       роль без права создания ролей (по умолчанию)
+     # -P, --pwprompt            назначить пароль новой роли
+#+end_src
+

@@ -71,3 +71,20 @@
    #+end_src
 
    
+* Зависимости
+Для ковертирования файлов с расширением gif в файлы с расширением pdf
+используется соманда *convert*.
+#+begin_src shell
+sudo apt install graphicsmagick-imagemagick-compat
+#+end_src
+
+* TODO Примеры переноса файлов на сервер
+#+begin_src shell
+rsync -avzh --progress /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
+
+rsync -azh --info=progress2 /home/namatv/public_html/2015-12-21-vsegost.com/Data/ root@192.168.0.110:/home/namatv/public_html/2015-12-21-vsegost.com/Data/
+
+rsync -avzh --progress /home/namatv/out.txt root@192.168.0.110:/home/namatv/
+#+end_src
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

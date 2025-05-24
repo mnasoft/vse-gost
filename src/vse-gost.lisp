@@ -15,7 +15,8 @@
             print-record
             )
   (:export create-sql-import-file
-           ))
+           )
+  (:documentation "Пакет содержит"))
 
 (in-package :vse-gost)
 
@@ -218,7 +219,7 @@
 @b(create-sql-import-file) выполняет формирование файла для
  импортирования таблицы ГОСТ в PostgreSQL.
 
-@b(Переменые:)
+ @b(Переменые:)
 @begin(list)
  @item(f-name - имя файла, в который выводится информация с данными
  для формирования таблицы, содержащей информацию о ГОСТ.)
@@ -244,27 +245,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(format t "~A" "ИНСТРУКЦИЯ
 
-1. Переход в рабочий каталог для зеркалирования (bash)
-cd ~/Downloads
 
-2. Зеркалирование (bash)
-wget -m -np http://vsegost.com/
 
-3. Для создания файла импорта '/home/namatv/out.txt' в PostgreSQL выполнте следующее:
-(vse-gost:create-sql-import-file
- (concatenate 'string
-              (uiop:getenv \"HOME\")
-              \"/\"
-              \"import-file.txt\")
- (namestring  vse-gost:*vsegost-Catalog*))
+(defun slynk-string-elision-length (&optional (length nil))
+  (setf
+   (cdr (assoc 'slynk:*string-elision-length* slynk:*slynk-pprint-bindings*)) length)
+  slynk:*slynk-pprint-bindings*)
 
-3.1 Для импорта в PostgreSQL выполнте в psql следующее:
-copy gost (local_path, designation, date, name, description, status) from '/home/namatv/out.txt';
-
-4. Для создания файла скрипта, преобразующего gif-файлы каждого каталога в  файл gost.pdf.
-(vse-gost:main-create-bash-script-gif-pdf-convertion vse-gost:*vsegost-Data*)
-
-Примечание: Примерное время выполнения сценария 5 минут.
-" )

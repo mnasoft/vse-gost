@@ -1,0 +1,16 @@
+* Создание базы данных gost
+1. Создаем для владельца mna базу gost из-под пользователя
+   mna@mnasoft-00
+   #+begin_src shell   
+     createdb -O mna gost
+   #+end_src
+
+2. Входим в консоль управления БД psql из-под ползователя
+   mna@mnasoft-00
+   #+begin_src shell 
+     psql -d gost -U mna
+   #+end_src
+
+3. Создаем таблицу gost в БД gost (gost=#) см. файл [[file:~/quicklisp/local-projects/clisp/vse-gost/sql/GOST.sql][GOST.sql]]
+
+4. Импортируем содержимое таблицы gost БД gost (gost=#) см файл [[file:~/quicklisp/local-projects/clisp/vse-gost/sql/copy.sql][copy.sql]]

@@ -75,43 +75,11 @@
 
 Примечание: поле external_path - удалено. 
 
-#+begin_src sql
-  CREATE TABLE public.gost
-  (
-    id serial PRIMARY KEY,  -- Идентификатор записи;
-    designation text,       -- Обозначение Стандарта;
-    name text,              -- Наименование Стандарта;
-    description text,       -- Краткиое описание Стандарт;
-    local_path text,        -- Путь к документу на локальном сервере;
-    date date,              -- Дата;
-    status text             -- Дествует или нет.
-  )
-  WITH (
-    OIDS=FALSE
-  );
-
-  ALTER TABLE public.gost OWNER TO mna;
-
-  COMMENT ON COLUMN public.gost.id IS            'Идентификатор записи.';
-
-  COMMENT ON COLUMN public.gost.designation IS   'Обозначение Стандарта';
-
-  COMMENT ON COLUMN public.gost.name IS          'Наименование Стандарта';
-
-  COMMENT ON COLUMN public.gost.description IS   'Краткиое описание Стандарта';
-
-  COMMENT ON COLUMN public.gost.local_path IS    'Путь к документу на локальном сервере';
-#+end_src
-
 ** Перекодируем файл out.txt
 1.) Открываем в notepad.
 2.) Сохраняем в кодировке ANSI.
 
 ** Импортируем содержимое таблицы gost из файла:
-
-#+begin_src sql   
-  copy gost (local_path, designation, date, name, description, status) from 'D:\home\_namatv\PRG\msys64\home\namatv\out_1.txt';
-#+end_src
 
 * Последующие действия
 См. проект mnas-web.

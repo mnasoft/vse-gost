@@ -1,19 +1,23 @@
 * Структура каталогов сайта vsegost.com
 Информация о ГОСТ, размещенная на сайте vsegost.com, содержится в
 нескольких каталогах:
-#+begin_src shell
-  find ~/public_html/vsegost.com -maxdepth 1 -type d
+#+begin_src shell :exports both
+  for i in `find ~/public_html/vsegost.com -maxdepth 1 -type d`
+  do
+      echo =$i=
+  done
+
 #+end_src
 
 #+RESULTS:
-| /home/mna/public_html/vsegost.com             |
-| /home/mna/public_html/vsegost.com/css         |
-| /home/mna/public_html/vsegost.com/Categories  |
-| /home/mna/public_html/vsegost.com/NCategories |
-| /home/mna/public_html/vsegost.com/Catalog     |
-| /home/mna/public_html/vsegost.com/js          |
-| /home/mna/public_html/vsegost.com/Data        |
-| /home/mna/public_html/vsegost.com/DataTN      |
+| =/home/mna/public_html/vsegost.com=             |
+| =/home/mna/public_html/vsegost.com/css=         |
+| =/home/mna/public_html/vsegost.com/Categories=  |
+| =/home/mna/public_html/vsegost.com/NCategories= |
+| =/home/mna/public_html/vsegost.com/Catalog=     |
+| =/home/mna/public_html/vsegost.com/js=          |
+| =/home/mna/public_html/vsegost.com/Data=        |
+| =/home/mna/public_html/vsegost.com/DataTN=      |
 
 ** Catalog
 В подкаталогах директория Catalog хранятся файлы с расширением *.shtm,

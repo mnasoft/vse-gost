@@ -1,0 +1,12 @@
+* Зеркалирование сайта vsegost.com
+1. [ ] Перейдите в рабочий каталог для зеркалирования
+   #+begin_src shell
+     cd ~/public_html
+   #+end_src
+
+2. [ ] Выполните зеркалирование 
+#+begin_src shell
+  # wget -m -np http://vsegost.com/
+  # wget -c -q --mirror --convert-links --adjust-extension --page-requisites --no-parent http://vsegost.com
+  wget -c --mirror --convert-links --adjust-extension --page-requisites --no-parent --quiet --random-wait https://vsegost.com/
+#+end_src

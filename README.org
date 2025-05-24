@@ -1,0 +1,21 @@
+
+* Введение
+Проект *vse-gost* предназначен для разбора информации о ГОСТ, размещенной на
+сайте [[http://vsegost.com]].
+
+Здесь приведена [[./catalog.org][структура каталогов]] сайта vsegost.com.
+
+* Проект *vse-gost* содержит инструкции по:
+1. [[./org/instruction-mirroring.org][Зеркалированию сайта vse-gost.com]]
+2. [[./org/instruction-import-file.org][Генерированию файла импорта для ДБ PostgreSQL]]
+3. [[./org/instruction-postgesql.org][Установке и настройке PostgreSql]]
+4. [[./org/instruction-gost.org][Созданию базы данных gost]]
+
+** Конвертирование gif-файлов в формат pdf 
+Конвертирование gif-файлов в формат pdf - можно выполнить сторонней
+утилитой gif_to_pdf.sh из пакета
+[[https://github.com/mnasoft/convert_git_to_pdf/]].
+
+** Последующие действия
+См. проект mnas-web.
+   

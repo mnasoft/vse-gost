@@ -1,0 +1,48 @@
+* Генерирование файла импорта в PostgreSQL
+** Генерирование файла импорта
+Для создания файла импорта в PostgreSQL выполнте следующее:
+#+begin_src lisp
+  (in-package :vse-gost)
+
+  (defparameter *home-dir* (namestring (user-homedir-pathname)))
+
+  (defparameter *out-file* (concatenate 'string *home-dir* "out.txt"))
+
+  (defparameter *files*
+    (directory
+     (concatenate 'string *home-dir*
+                  "public_html" "/" "vsegost.com/Catalog/*/*.shtml.html"))
+    "Список файлов, в которых присутствует информация о ГОСТ.")
+  ,#+nil
+  (length *files*)
+
+  (create-sql-import-file *out-file* (namestring *vsegost-Catalog*))
+
+  (list (list "out-file" *out-file*)
+        (list "vsegost-Catalog" (namestring *vsegost-Catalog*))
+        (list "vsegost-Data" (namestring *vsegost-Data*))
+        (list "GOST number" (length *files*)))
+#+end_src
+
+#+RESULTS:
+| out-file        | /home/mna/out.txt                          |
+| vsegost-Catalog | /home/mna/public_html/vsegost.com/Catalog/ |
+| vsegost-Data    | /home/mna/public_html/vsegost.com/Data/    |
+| GOST number     | 51144                                      |
+
+** Описание формата файла импорта в PostgreSQL [[~/out.txt]]:
+- имеет формат разделенный табуляциями;
+- в своих строках содержит:
+  - относительный путь к каталогу, содержащему файлы gif, в которых
+    содержатся страницы соответствующего ГОСТ. Например: "0/10";
+  - обозначение. Например: "ГОСТ 10821-2007	";
+  - дату. Например: "2007-06-01". Причем месяц и дата всегда условно
+    принимаются "06-01".
+  - наименование. Например: "Проволока из платины и платинородиевых
+    сплавов для термоэлектрических преобразователей. Технические
+    условия";
+  - описание. Например: "Настоящий стандарт распространяется на
+    проволоку из платины и платинородиевых сплавов, предназначенную
+    для изготовления термоэлектродов термоэлектрических
+    преобразователей"    
+  - статус. Например: "действующий".
