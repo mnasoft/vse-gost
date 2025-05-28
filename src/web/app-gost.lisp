@@ -105,10 +105,15 @@
   (make-instance 'gost-item :gost gost))
 
 (defmethod reblocks/widget:render ((gost-item gost-item))
-  (let ((gost (gost-item-gost gost-item)))
+  (let* ((gost (gost-item-gost gost-item))
+         (details-url
+           (route-url "gost-details"
+                      :gost-id (gost-id gost))))
     (with-html ()
       (:tr 
-       (:td :style "border: 1px solid black;" (gost-designation gost)) 
+       ;;(:td :style "border: 1px solid black;" (gost-designation gost))
+       (:td :style "border: 1px solid black;"
+            (:a :href details-url (gost-designation gost)))
        (:td :style "border: 1px solid black;" (gost-name        gost))
        (:td :style "border: 1px solid black;" (gost-status      gost))))))
 
@@ -139,8 +144,11 @@
   (let ((gost (gost gost-page))
         ;; This is the way how we can get URL path
         ;; pointing to another page without hardcoding it.
-        #+nil (list-url (route-url "gosts-list")))
+        (list-url (route-url "gosts-list")))
     (reblocks/html:with-html ()
+      (:div :style "display: flex; gap: 1rem"
+            (:a :href list-url
+                "Back to gost list."))
       (:div :style "display: flex; flex-direction: column;" ;;  gap: 0.25rem
             (:p "ID:"          (gost-id gost))
             (:p "Designation:" (gost-designation gost))
@@ -149,34 +157,13 @@
             (:p "Local_Path"   (gost-local_path  gost))
             (:p "Status"       (gost-status      gost))
             (loop :for gif :in (gost-gifs gost)
-                  :do (:p (:img :src (file-to-base64-src gif))))
-
-            #+nil
-            (:h1 :style "display: flex; gap: 1rem; margin-bottom: 0"
-                 (:b (if (done gost)
-                         "[DONE]"
-                         "[TODO]"))
-                 (:span :style "font-weight: normal"
-                        (title gost)))
-            #+nil
-            (:div (if (string= (description gost) "")
-                      "No defails on this gost."
-                      (description gost)))
-            #+nil
-            (:div :style "display: flex; gap: 1rem"
-                  (:a :href list-url
-                      "Back to gost list."))))))
-
-(defmethod reblocks/widget:render ((widget gost-page))
-    (reblocks/html:with-html ()
-      (:p "My GOST-PAGE widget")))
-
-
-#+nil
-(reblocks/html:with-html
-      (loop :for file :in files
-          :do (:img :src (format nil "/Data/177/17799/~A" (pathname-name file))
-                                :alt (pathname-name file))))
+                  :do
+                     (:div 
+                      (:img :src (file-to-base64-src gif)
+                            :style "width: 100%;"))))
+      (:div :style "display: flex; gap: 1rem"
+            (:a :href list-url
+                "Back to gost list.")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; gost-list
@@ -244,24 +231,30 @@
   :routes ((page ("/" :name "gost-pg")
              (make-gost-page 48930))))
 
+;; Новая версия
+(defapp gosts
+  :prefix "/"
+  :routes ((page ("/<int:gost-id>" :name "gost-details")
+             (make-gost-page gost-id))
+           (page ("/" :name "gosts-list")
+             (make-gost-list (gost-table "" "2.1" "")))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun start (&key (port 8080))
+(defun start-gosts (&key (port 8080))
   (unless (and postmodern:*database*
                (postmodern:connected-p postmodern:*database*))
     (postmodern:connect-toplevel "gost" "mna" "" "localhost"))
   (reblocks/server:start :port port
-                         :apps '(gosts gost-pg)))
+                         :apps '(gosts)))
 
-(defun stop ()
+(defun stop-gosts ()
   (reblocks/server:stop)
   (when (postmodern:connected-p postmodern:*database*)
     (postmodern:disconnect postmodern:*database*)))
 
-(ql:quickload :reblocks)
-
-#+nil (start)
-#+nil (stop)
+#+nil (start-gosts)
+#+nil (stop-gosts)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
