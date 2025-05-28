@@ -1,5 +1,8 @@
 (in-package #:vse-gost/web)
 
+(defparameter *vsegost-com-Data*
+  (concatenate 'string (uiop:getenv "HOME") "/public_html/vsegost.com/Data/"))
+
 (defun gost-table (name designation description)
   (postmodern:query (:select '* :from 'gost :where
 		          (:and (:ilike 'name (mnas-string/db:prepare-to-query name))
@@ -78,19 +81,14 @@
     (when record (make-gost record))))
 
 (defmethod gost-gifs ((gost gost))
-  (sort
-   (directory
-    (concatenate
-     'string
-     "/home/mna/public_html/vsegost.com/Data/"
-     (gost-local_path gost)
-     "/*.gif"))
-   #'<
-   :key
-   #'(lambda (x)
-       (parse-integer
-        (pathname-name x)
-        :junk-allowed t))))
+  (let ((gifs (directory
+               (concatenate 'string
+                            *vsegost-com-Data*
+                            (gost-local_path gost)
+                            "/*.gif"))))
+  (sort gifs #'<
+        :key
+        #'(lambda (x) (parse-integer (pathname-name x) :junk-allowed t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; gost-item
@@ -184,17 +182,13 @@
 (defmethod reblocks/widget:render ((gost-list gost-list))
   (with-html ()
     (:h1 "Gosts")
-      ;; Form for adding a new gost
     (flet ((on-submit (&key designation name &allow-other-keys)
              ;;(format t "designation=~A name=~A ~%" designation name)
              (setf (gost-list-items gost-list)
                    (loop :for record :in (gost-table name designation "")
                      :for gost = (make-gost record)
-                     :collect (make-gost-item gost))
-                   )
-;;           (make-gost-list (gost-table name designation ""))
-             (update gost-list)
-             ))
+                     :collect (make-gost-item gost)))
+             (update gost-list)))
       (:form :onsubmit (make-js-form-action #'on-submit)
              (:input :type "text"
                      :name "designation"
@@ -210,34 +204,19 @@
                      :value "Select")))    
     (:table :style"border: 1px solid black; border-collapse: collapse;"
      (loop :for item :in (gost-list-items gost-list) :do
-       (reblocks/widget:render item)))
-    
-))
+       (reblocks/widget:render item)))))
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; defapp gosts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(reblocks/app:defapp gosts
-  :prefix "/gosts"
-  :routes ((page ("/" :name "gosts-list")
-             (make-gost-list (gost-table "" "2.1" "")))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; defapp gost-pg
-
-(reblocks/app:defapp gost-pg
-  :prefix "/gost-pg"
-  :routes ((page ("/" :name "gost-pg")
-             (make-gost-page 48930))))
-
-;; Новая версия
 (defapp gosts
   :prefix "/"
   :routes ((page ("/<int:gost-id>" :name "gost-details")
              (make-gost-page gost-id))
            (page ("/" :name "gosts-list")
-             (make-gost-list (gost-table "" "2.1" "")))))
+             #+nil (make-gost-list (gost-table "" "2.1" ""))
+             (make-gost-list nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

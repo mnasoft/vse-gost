@@ -10,7 +10,8 @@
 2. [[./org/instruction-import-file.org][Генерированию файла импорта для ДБ PostgreSQL]]
 3. [[./org/instruction-postgesql.org][Установке и настройке PostgreSql]]
 4. [[./org/instruction-gost.org][Созданию базы данных gost]]
-
+5. [[./org/instruction-build-web-app.org][Сборке выполняемого файла, запускающего веб-сервер]]
+6. [[file:org/instruction-start-web-app.org][Запуску веб приложения]]
 ** Конвертирование gif-файлов в формат pdf 
 Конвертирование gif-файлов в формат pdf - можно выполнить сторонней
 утилитой gif_to_pdf.sh из пакета

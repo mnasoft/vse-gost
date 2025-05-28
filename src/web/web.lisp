@@ -20,6 +20,10 @@
   (:import-from #:reblocks/widgets/string-widget
                 #:make-string-widget)
   (:shadowing-import-from #:40ants-routes/defroutes
-                          #:get))
+                          #:get)
+  (:export start-gosts
+           stop-gosts)
+  )
 
 (in-package #:vse-gost/web)
+
