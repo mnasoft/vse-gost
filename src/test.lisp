@@ -1,5 +1,11 @@
 (in-package :vse-gost)
 
+
+(defun slynk-string-elision-length (&optional (length nil))
+  (setf
+   (cdr (assoc 'slynk:*string-elision-length* slynk:*slynk-pprint-bindings*)) length)
+  slynk:*slynk-pprint-bindings*)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Участок для тестирования кода
 

@@ -1,7 +1,9 @@
 * Сборка выполняемого файла, запускающего веб-сервер
 1. Запустите sbcl в консоли
 2. Выполните код в SBCL
-   #+begin_src lisp
-     (asdf:load-system "vse-gost/web")
-     (sb-ext:save-lisp-and-die "vsegost-web.exe" :toplevel #'vse-gost/web:start-gosts :executable t :compression t)
+   #+begin_src sh :results none
+     mkdir -p ../src/web/build 
+     cd ../src/web/build 
+     sh ../sh/build.sh
    #+end_src
+

@@ -244,12 +244,3 @@
     (- (get-universal-time) start)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-
-(defun slynk-string-elision-length (&optional (length nil))
-  (setf
-   (cdr (assoc 'slynk:*string-elision-length* slynk:*slynk-pprint-bindings*)) length)
-  slynk:*slynk-pprint-bindings*)
-

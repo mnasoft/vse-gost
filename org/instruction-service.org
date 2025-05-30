@@ -1,0 +1,35 @@
+* Создание сервиса
+#+begin_src lisp
+  (asdf:load-system "vsegost/web")
+
+  (sb-ext:save-lisp-and-die "vsegost-web.exe"
+                            :toplevel #'start-gost  
+                            :executable t
+                            :compression t)
+#+end_src
+
+/etc/systemd/system/vsegost-web.service
+#+begin_src sh
+  #
+  SERVICE_NAME="vsegost-web"
+  SERVICE_FNAME="/etc/systemd/system/${SERVICE_NAME}.service"
+  sudo echo "" > ${SERVICE_FNAME}
+  sudo echo "[Unit]" >> ${SERVICE_FNAME}
+  sudo echo "Description=${SERVICE_NAME}" >> ${SERVICE_FNAME}
+  sudo echo "After=network.target" >> ${SERVICE_FNAME}
+  sudo echo "" >> ${SERVICE_FNAME}
+  sudo echo "[Service]" >> ${SERVICE_FNAME}
+  sudo echo "ExecStart=/usr/local/bin/vsegost-web.sh" >> ${SERVICE_FNAME}
+  sudo echo "Restart=always" >> ${SERVICE_FNAME}
+  sudo echo "User=root" >> ${SERVICE_FNAME}
+  sudo echo "WorkingDirectory=/usr/local/bin" >> ${SERVICE_FNAME}
+  sudo echo "StandardOutput=syslog" >> ${SERVICE_FNAME}
+  sudo echo "StandardError=syslog" >> ${SERVICE_FNAME}
+  sudo echo "" >> ${SERVICE_FNAME}
+  sudo echo "[Install]" >> ${SERVICE_FNAME}
+  sudo echo "WantedBy=multi-user.target" >> ${SERVICE_FNAME}
+#+end_src
+
+#+RESULTS:
+
+
