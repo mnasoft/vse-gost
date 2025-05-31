@@ -212,9 +212,9 @@
 
 (defapp gosts
   :prefix "/"
-  :routes ((page ("/<int:gost-id>" :name "gost-details")
+  :routes ((page ("/gosts/<int:gost-id>" :name "gost-details")
              (make-gost-page gost-id))
-           (page ("/" :name "gosts-list")
+           (page ("/gosts/" :name "gosts-list")
              #+nil (make-gost-list (gost-table "" "2.1" ""))
              (make-gost-list nil))))
 
