@@ -2,6 +2,66 @@
 
 (sb-ext:save-lisp-and-die "vsegost-web.exe" :executable t :compression t)
 
+(defclass img-ref ()
+  ((pathname
+    :initarg :pathname
+    :accessor img-ref-pathname
+    :initform #P"/"
+    :type pathname
+             :documentation "pathname to image")
+   (href
+    :initarg :href
+    :accessor img-ref-href
+    :initform "https://example.org"
+    :type string 
+    :documentation "href")
+   (alt
+    :initarg :alt
+    :initform ""
+    :accessor img-ref-alt
+    :type string 
+    :documentation "alter text for image")))
+
+(defun make-img-ref (img-pathname href alt)
+  (make-instance 'img-ref
+                 :pathname    img-pathname
+                 :href        href
+                 :alt         alt))
+
+(reblocks/widget:defwidget w-img-ref ()
+  ((item :initarg :item
+         :type img-ref
+         :reader w-img-ref-item)))
+
+(defun make-w-img-ref (img-ref)
+  (make-instance 'w-img-ref :item img-ref))
+
+(defmethod reblocks/widget:render ((ref-img-w w-img-ref))
+  (let* ((item (w-img-ref-item ref-img-w)))
+    (img-ref-pathname item)
+
+    (with-html ()
+      (:td (:a :href (img-ref-href item) :target "_blank"
+                    (:img :src (file-to-base64-src (img-ref-pathname item))
+                          :height "24px"
+                          :alt (img-ref-alt item)))))))
+
+(defparameter *w*
+  (make-w-img-ref
+   (make-img-ref "/home/mna/public_html/images/logos/MNASoft.png"
+                 "https://mnasoft.ddns.net"
+                 "MNASoft.png")))
+
+(directory "/home/mna/public_html/images/logos/*.png")
+
+(progn
+  (ql:quickload :reblocks-tests)
+  (reblocks-tests/utils:with-test-session ()
+    (render
+     (make-w-img-ref
+      (make-img-ref "/home/mna/public_html/images/logos/MNASoft.png"
+                    "https://mnasoft.ddns.net"
+                    "MNASoft.png")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Тестирование

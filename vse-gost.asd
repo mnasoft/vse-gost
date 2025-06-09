@@ -23,22 +23,13 @@
 
 (defsystem "vse-gost/web"
   :description "Зависимости для сборки документации"
-  :depends-on ("40ants-routes" "reblocks" "postmodern" "mnas-string"
-               ;;"40ants-routes/defroutes"
-               ;;"40ants-routes/route-url"
-               ;;
-               ;;"reblocks/app"
-               ;;"reblocks/actions"
-               ;;"reblocks/server"
-               ;;"reblocks/routes"
-               ;;"reblocks/widgets/string-widget"
-               ;;
-               )
+  :depends-on ("40ants-routes" "reblocks" "postmodern" "mnas-string")
   :components ((:module "src/web"
 		:serial nil
                 :components ((:file "web")
                              (:file "app-hw")
                              (:file "app-task")
-                             (:file "app-gost") 
+                             (:file "app-gost")
+                             (:file "header-footer") 
                              ))))
 

@@ -2,10 +2,10 @@
 
 (reblocks/app:defapp hw
   :prefix "/"
-  :routes ((page ("/" :name "tasks-list")
+  :routes ((page ("/" :name "hello-world")
              (make-string-widget "Hello World!"))))
 
-(defun start (&key (port 8080))
+(defun start (&key (port 8081))
   (reblocks/server:start :port port
                          :apps '(hw)))
 

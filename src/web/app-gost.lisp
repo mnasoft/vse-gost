@@ -3,11 +3,11 @@
 (defparameter *vsegost-com-Data*
   (concatenate 'string (uiop:getenv "HOME") "/public_html/vsegost.com/Data/"))
 
-(defun gost-table (name designation description)
+(defun gost-table (name designation status)
   (postmodern:query (:select '* :from 'gost :where
 		          (:and (:ilike 'name (mnas-string/db:prepare-to-query name))
 			        (:ilike 'designation (mnas-string/db:prepare-to-query designation))
-			        (:ilike 'description (mnas-string/db:prepare-to-query description))))))
+			        (:ilike 'status (mnas-string/db:prepare-to-query status))))))
 
 (defun file-to-base64 (filename)
   (with-open-file (stream filename :element-type '(unsigned-byte 8))
@@ -147,13 +147,13 @@
       (:div :style "display: flex; gap: 1rem"
             (:a :href list-url
                 "Back to gost list."))
-      (:div :style "display: flex; flex-direction: column;" ;;  gap: 0.25rem
-            (:p "ID:"          (gost-id gost))
-            (:p "Designation:" (gost-designation gost))
-            (:p "Name"         (gost-name        gost))
-            (:p "Description"  (gost-description gost))
-            (:p "Local_Path"   (gost-local_path  gost))
-            (:p "Status"       (gost-status      gost))
+      (:div  ;; :style "display: flex; flex-direction: column;"  gap: 0.25rem
+            (:p (:b "ID: ")          (gost-id gost))
+            (:p (:b "Designation: ") (gost-designation gost))
+            (:p (:b "Name: ")        (gost-name        gost))
+            (:p (:b "Description: ") (gost-description gost))
+            (:p (:b "Local_Path: ")  (gost-local_path  gost))
+            (:p (:b "Status: ")      (gost-status      gost))
             (loop :for gif :in (gost-gifs gost)
                   :do
                      (:div 
@@ -161,7 +161,8 @@
                             :style "width: 100%;"))))
       (:div :style "display: flex; gap: 1rem"
             (:a :href list-url
-                "Back to gost list.")))))
+                "Back to gost list."))
+      (:footer (make-w-img-refs *img-ref-data*)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; gost-list
@@ -181,11 +182,10 @@
 
 (defmethod reblocks/widget:render ((gost-list gost-list))
   (with-html ()
-    (:h1 "Gosts")
-    (flet ((on-submit (&key designation name &allow-other-keys)
+    (flet ((on-submit (&key designation name status &allow-other-keys)
              ;;(format t "designation=~A name=~A ~%" designation name)
              (setf (gost-list-items gost-list)
-                   (loop :for record :in (gost-table name designation "")
+                   (loop :for record :in (gost-table name designation status)
                      :for gost = (make-gost record)
                      :collect (make-gost-item gost)))
              (update gost-list)))
@@ -202,9 +202,11 @@
              (:input :type "submit"
                      :class "button"
                      :value "Select")))    
-    (:table :style"border: 1px solid black; border-collapse: collapse;"
+    (:table :style "border: 1px solid black; border-collapse: collapse;"
      (loop :for item :in (gost-list-items gost-list) :do
-       (reblocks/widget:render item)))))
+       (reblocks/widget:render item)))
+    (:footer (make-w-img-refs *img-ref-data*))
+    ))
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; defapp gosts
@@ -212,10 +214,11 @@
 
 (defapp gosts
   :prefix "/"
-  :routes ((page ("/gosts/<int:gost-id>" :name "gost-details")
+  :routes ((page ("/<int:gost-id>" :name "gost-details")
              (make-gost-page gost-id))
-           (page ("/gosts/" :name "gosts-list")
-             #+nil (make-gost-list (gost-table "" "2.1" ""))
+           (page ("/" :name "gosts-list")
+             #+nil
+             (make-gost-list (gost-table "" "2.1" ""))
              (make-gost-list nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
