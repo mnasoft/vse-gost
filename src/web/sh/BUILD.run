@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Создаем каталог сборки
+mkdir -p ./build
+# Перехдим в него
+cd ./build
+# Собираем выполняемый файл
+sh ../build.sh
+# Генерируем файл сервиса
+sh ../mk-service.sh
+cp ../vsegost-web.sh .
