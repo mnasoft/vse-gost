@@ -6,6 +6,7 @@
 2. [ ] Инициализируем кластер базы данных
    #+begin_src shell
      initdb -D /var/lib/postgres/data --encoding=UTF8 --locale=ru_RU.UTF8 --lc-collate=ru_RU.UTF8 --lc-ctype=ru_RU.UTF8
+     "D:\home\_namatv\PRG\msys64\ucrt64\bin\initdb.exe" "D:\home\_namatv\PRG\msys64\var\lib\postgres\data" --encoding=UTF8 --locale=ru_RU.UTF8 --lc-collate=ru_RU.UTF8 --lc-ctype=ru_RU.UTF8
    #+end_src
 
 3. [ ] Запускаем сервер баз данных
