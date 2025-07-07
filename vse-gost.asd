@@ -23,7 +23,7 @@
 
 (defsystem "vse-gost/web"
   :description "Зависимости для сборки документации"
-  :depends-on ("40ants-routes" "reblocks" "postmodern" "mnas-string")
+  :depends-on ("40ants-routes" "reblocks" "postmodern" "mnas-string" "mnas-path")
   :components ((:module "src/web"
 		:serial nil
                 :components ((:file "web")

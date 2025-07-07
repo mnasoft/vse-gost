@@ -1,0 +1,30 @@
+* Создать файл истории команд
+   #+begin_src bash
+     mkdir -p "C:\Users\namatv\AppData\Roaming/postgresql"
+     touch "C:\Users\namatv\AppData\Roaming/postgresql/psql_history"
+   #+end_src
+
+* Создать базу данных gost
+#+begin_src sh
+  chcp 1251
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\createdb" -O namatv gost
+#+end_src
+
+* Запусить интерпретатор команд
+   #+begin_src sh
+     chcp 1251 
+     "D:\home\_namatv\PRG\msys64\ucrt64\bin\psql" -d gost -U namatv
+   #+end_src
+
+* Пересохранить файлы GOST.sql, copy.sql, out.txt в кодировке ANSI
+* Создать таблицу  gost
+   #+begin_src sh
+     chcp 1251
+     "D:\home\_namatv\PRG\msys64\ucrt64\bin\psql" -d gost -U namatv -f "d:\home\_namatv\GOST.sql"
+   #+end_src
+
+* Заполнить таблицу gost данными
+   #+begin_src sh
+     chcp 1251
+     "D:\home\_namatv\PRG\msys64\ucrt64\bin\psql" -d gost -U namatv -f "d:\home\_namatv\copy.sql"
+   #+end_src
