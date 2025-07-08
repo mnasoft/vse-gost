@@ -27,3 +27,6 @@
 
 (in-package #:vse-gost/web)
 
+;; sbcl
+#+nil (asdf:load-system :vse-gost/web)
+#+nil (save-lisp-and-die "vse-gost-web.exe"  :executable t :toplevel #'vse-gost/web:start-gosts :compression t)
