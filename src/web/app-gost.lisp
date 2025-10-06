@@ -127,7 +127,6 @@
                 :type boolean
                 :accessor edit-mode-p)))
 
-
 (defun make-gost-page (gost-id)
   (let ((gost (get-gost gost-id)))
     (cond
@@ -212,8 +211,9 @@
 ;;;; defapp gosts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 (defapp gosts
-  :prefix "/"
+  :prefix "/apps/gosts/"
   :routes ((page ("/<int:gost-id>" :name "gost-details")
              (make-gost-page gost-id))
            (page ("/" :name "gosts-list")
@@ -228,7 +228,7 @@
                (postmodern:connected-p postmodern:*database*))
     (postmodern:connect-toplevel "gost" "mna" "" "localhost"))
   (reblocks/server:start :port port
-                         :apps '(gosts)))
+                         :apps '(root gosts hw)))
 
 (defun stop-gosts ()
   (reblocks/server:stop)
@@ -237,4 +237,40 @@
 
 #+nil (start-gosts)
 #+nil (stop-gosts)
+
+
+(reblocks/widget:defwidget root-page ()
+  ())
+
+(defun make-root-page ()
+      (make-instance 'root-page))
+
+(defmethod reblocks/widget:render ((root-page root-page))
+  (reblocks/html:with-html ()
+    (:div
+     (:h1 "Страницы")
+     (:p (:a :href "/apps/gosts/" "gosts"))
+     (:p (:a :href "/apps/hw/"    "hw"))
+     (:p (:a :href "https://mnasoft.ddns.net/common-lisp/systems/docs/"    "Проекты"))
+     (:p (:a :href "/common-lisp/systems/docs/"    "Проекты"))
+     
+     )
+    (:footer (make-w-img-refs *img-ref-data*))
+    ))
+
+
+
+(reblocks/app:defapp root
+  :prefix "/"
+  :routes ((page ("/" :name "root")
+             (make-root-page))))
+
+#+nil
+(defapp welcome-screen-app
+  :prefix "/")
+
+#+nil
+(defmethod reblocks/page:init-page ((app welcome-screen-app) (url-path string) expire-at)
+           (check-type expire-at (or null local-time::timestamp))
+           "Hello world!")
 
