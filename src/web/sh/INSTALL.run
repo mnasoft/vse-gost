@@ -7,19 +7,24 @@ SH_NAME="${NAME}.sh"
 SERVISE_DIR="/usr/lib/systemd/system"
 BIN_DIR="/usr/local/bin"
 
+
+cp -f screen-as-service.sh ${BIN_DIR}
+chmod +x ${BIN_DIR}/screen-as-service.sh
+
 # Создаем каталог сборки
 mkdir -p ./build
 # Перехдим в него
 cd ./build
 # Собираем
 
-sudo cp -f ${EXE_NAME} ${BIN_DIR}
+cp -f ${EXE_NAME} ${BIN_DIR}
 chmod +x ${BIN_DIR}/${EXE_NAME}
 
-sudo cp -f ${EXE_NAME} ${BIN_DIR}
+cp -f ${EXE_NAME} ${BIN_DIR}
 chmod +x ${BIN_DIR}/${SH_NAME}
 
-sudo cp -f ${SERVICE_NAME} $SERVISE_DIR$
+cp -f ${SERVICE_NAME} ${SERVISE_DIR}
+
 
 
 #systemctl daemon-reload

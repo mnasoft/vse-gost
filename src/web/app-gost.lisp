@@ -127,7 +127,6 @@
                 :type boolean
                 :accessor edit-mode-p)))
 
-
 (defun make-gost-page (gost-id)
   (let ((gost (get-gost gost-id)))
     (cond
@@ -212,8 +211,9 @@
 ;;;; defapp gosts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 (defapp gosts
-  :prefix "/"
+  :prefix "/apps/gosts/"
   :routes ((page ("/<int:gost-id>" :name "gost-details")
              (make-gost-page gost-id))
            (page ("/" :name "gosts-list")
@@ -234,8 +234,12 @@
                (postmodern:connected-p postmodern:*database*))
     (postmodern:connect-toplevel "gost" (uiop:getenv "USER") "" "localhost"))
   (reblocks/server:start :port port
+<<<<<<< HEAD
                          :apps '(gosts)
                          :interface (detect-interface)))
+=======
+                         :apps '(root gosts hw)))
+>>>>>>> cf9a26d66ca5c588771da4de08f64adbfea58751
 
 (defun stop-gosts ()
   (reblocks/server:stop)
@@ -248,4 +252,43 @@
 #+nil (start-gosts)
 #+nil (stop-gosts)
 
+<<<<<<< HEAD
 #+nil (defparameter *vsegost-com-Data* "//n133906/home/_namatv/public_html/Site/GOST-2025/Data/")
+=======
+
+(reblocks/widget:defwidget root-page ()
+  ())
+
+(defun make-root-page ()
+      (make-instance 'root-page))
+
+(defmethod reblocks/widget:render ((root-page root-page))
+  (reblocks/html:with-html ()
+    (:div
+     (:h1 "Страницы")
+     (:p (:a :href "/apps/gosts/" "gosts"))
+     (:p (:a :href "/apps/hw/"    "hw"))
+     (:p (:a :href "https://mnasoft.ddns.net/common-lisp/systems/docs/"    "Проекты"))
+     (:p (:a :href "/common-lisp/systems/docs/"    "Проекты"))
+     
+     )
+    (:footer (make-w-img-refs *img-ref-data*))
+    ))
+
+
+
+(reblocks/app:defapp root
+  :prefix "/"
+  :routes ((page ("/" :name "root")
+             (make-root-page))))
+
+#+nil
+(defapp welcome-screen-app
+  :prefix "/")
+
+#+nil
+(defmethod reblocks/page:init-page ((app welcome-screen-app) (url-path string) expire-at)
+           (check-type expire-at (or null local-time::timestamp))
+           "Hello world!")
+
+>>>>>>> cf9a26d66ca5c588771da4de08f64adbfea58751
