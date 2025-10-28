@@ -18,5 +18,10 @@
 [[https://github.com/mnasoft/convert_git_to_pdf/]].
 
 ** Последующие действия
-См. проект mnas-web.
-   
+См. проект vse-gost/web.
+
+* Запуск сервера
+В отдельной консоли необходимо выполнить
+#+begin_src shell
+  vsegost-web-screen.sh
+#+end_src
