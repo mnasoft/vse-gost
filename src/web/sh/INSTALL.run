@@ -1,33 +1,23 @@
 #!/bin/bash
 
 NAME="vsegost-web"
-SERVICE_NAME="${NAME}.service"
 EXE_NAME="${NAME}.exe"
 SH_NAME="${NAME}.sh"
-SERVISE_DIR="/usr/lib/systemd/system"
+SCREEN_NAME="${NAME}-screen.sh"
 BIN_DIR="/usr/local/bin"
 
+# SERVISE_DIR="/usr/lib/systemd/system"
+# SERVICE_NAME="${NAME}.service"
 
-cp -f screen-as-service.sh ${BIN_DIR}
-chmod +x ${BIN_DIR}/screen-as-service.sh
+sh BUILD.run
 
-# Создаем каталог сборки
-mkdir -p ./build
-# Перехдим в него
-cd ./build
-# Собираем
+sudo cp -f ./build/${EXE_NAME} ${BIN_DIR}
+sudo chmod +x ${BIN_DIR}/${EXE_NAME}
 
-cp -f ${EXE_NAME} ${BIN_DIR}
-chmod +x ${BIN_DIR}/${EXE_NAME}
+sudo cp -f ./build/${SH_NAME} ${BIN_DIR}
+sudo chmod +x ${BIN_DIR}/${SH_NAME}
 
-cp -f ${EXE_NAME} ${BIN_DIR}
-chmod +x ${BIN_DIR}/${SH_NAME}
+sudo cp -f ${SCREEN_NAME} ${BIN_DIR}
+sudo chmod +x ${BIN_DIR}/${SCREEN_NAME} 
 
-cp -f ${SERVICE_NAME} ${SERVISE_DIR}
-
-
-
-#systemctl daemon-reload
-
-#journalctl -u vsegost-web -f
-#reset-failed
+# sudo cp -f ./build/${SERVICE_NAME} ${SERVISE_DIR}

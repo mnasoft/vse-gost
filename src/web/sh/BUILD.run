@@ -6,6 +6,10 @@ mkdir -p ./build
 cd ./build
 # Собираем выполняемый файл
 sh ../build.sh
+# Генерируем файл запуска для sceen
+cp ../vsegost-web-screen.sh .
+
 # Генерируем файл сервиса
-sh ../mk-service.sh
-cp ../vsegost-web.sh .
+# sh ../mk-service.sh
+# cp ../vsegost-web.sh .
+

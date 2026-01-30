@@ -2,7 +2,7 @@
 # Создание сервиса
 
 SERVICE_NAME="vsegost-web"
-
+SERVICE_USER="mna"
 
 SERVICE_FNAME="./${SERVICE_NAME}.service"
 # Затираем предыдыущий файл
@@ -21,8 +21,7 @@ sudo echo "RemainAfterExit=yes" >> ${SERVICE_FNAME}
 
 #sudo echo "Restart=always" >> ${SERVICE_FNAME}
 
-sudo echo "User=root" >> ${SERVICE_FNAME}
-#sudo echo "User=mna" >> ${SERVICE_FNAME}
+sudo echo "User=${SERVICE_USER}" >> ${SERVICE_FNAME}
 
 sudo echo "WorkingDirectory=/usr/local/bin" >> ${SERVICE_FNAME}
 sudo echo "StandardOutput=syslog" >> ${SERVICE_FNAME}
