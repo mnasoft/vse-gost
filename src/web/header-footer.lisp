@@ -70,15 +70,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defparameter *imges*
+  '(("MNASoft.png"     "https://mnasoft.ddns.net"           "MNASoft")
+    ("ArchLinux.png"   "https://archlinux.org"              "ArchLinux")
+    ("Common-Lisp.png" "https://common-lisp.net"            "Common-Lisp")
+    ("SBCL.png"        "https://sbcl.org"                   "SBCL")
+    ("Emacs.png"       "https://www.gnu.org/software/emacs" "Emacs")
+    ("SLY.png"         "https://github.com/joaotavora/sly"  "SLY")
+    ("40ants.png"      "https://40ants.com/reblocks"        "Reblocks")))
+
+(defparameter *img-logos-path*
+  "~/public_html/images/logos/")
+
 (defparameter *img-ref-data*
-  '((#P"/home/mna/public_html/images/logos/MNASoft.png" "https://mnasoft.ddns.net" "MNASoft")
-    (#P"/home/mna/public_html/images/logos/ArchLinux.png" "https://archlinux.org" "ArchLinux")
-    (#P"/home/mna/public_html/images/logos/Common-Lisp.png" "https://common-lisp.net" "Common-Lisp")
-    (#P"/home/mna/public_html/images/logos/SBCL.png" "https://sbcl.org" "SBCL")
-    (#P"/home/mna/public_html/images/logos/Emacs.png" "https://www.gnu.org/software/emacs" "Emacs")
-    (#P"/home/mna/public_html/images/logos/SLY.png" "https://github.com/joaotavora/sly" "SLY")
-    (#P"/home/mna/public_html/images/logos/40ants.png" "https://40ants.com/reblocks" "Reblocks")
-    ))
+  (loop :for (png http name) :in *imges*
+        :when (probe-file (mnas-path:pathname-merge *img-logos-path* png))
+          :collect 
+          (list
+           (probe-file (mnas-path:pathname-merge *img-logos-path* png))
+           http
+           name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; tests

@@ -23,6 +23,9 @@
 
 (defsystem "vse-gost/web"
   :description "Зависимости для сборки документации"
+<<<<<<< HEAD
+  :depends-on ("40ants-routes" "reblocks" "postmodern" "mnas-string" "mnas-path")
+=======
   :depends-on ("40ants-routes"
                "reblocks"
                "postmodern"
@@ -30,6 +33,7 @@
                "clack"
                "clack-handler-hunchentoot"
                "hunchentoot")
+>>>>>>> cf9a26d66ca5c588771da4de08f64adbfea58751
   :components ((:module "src/web"
 		:serial nil
                 :components ((:file "web")

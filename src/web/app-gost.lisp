@@ -223,21 +223,38 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun detect-interface ()
+  (let ((hostname (uiop:getenv "HOSTNAME")))
+    (if (eq (char hostname 0) #\N)
+        (string-downcase hostname)
+        "localhost")))
+
 (defun start-gosts (&key (port 8080))
   (unless (and postmodern:*database*
                (postmodern:connected-p postmodern:*database*))
-    (postmodern:connect-toplevel "gost" "mna" "" "localhost"))
+    (postmodern:connect-toplevel "gost" (uiop:getenv "USER") "" "localhost"))
   (reblocks/server:start :port port
+<<<<<<< HEAD
+                         :apps '(gosts)
+                         :interface (detect-interface)))
+=======
                          :apps '(root gosts hw)))
+>>>>>>> cf9a26d66ca5c588771da4de08f64adbfea58751
 
 (defun stop-gosts ()
   (reblocks/server:stop)
   (when (postmodern:connected-p postmodern:*database*)
     (postmodern:disconnect postmodern:*database*)))
 
+
+
+
 #+nil (start-gosts)
 #+nil (stop-gosts)
 
+<<<<<<< HEAD
+#+nil (defparameter *vsegost-com-Data* "//n133906/home/_namatv/public_html/Site/GOST-2025/Data/")
+=======
 
 (reblocks/widget:defwidget root-page ()
   ())
@@ -274,3 +291,4 @@
            (check-type expire-at (or null local-time::timestamp))
            "Hello world!")
 
+>>>>>>> cf9a26d66ca5c588771da4de08f64adbfea58751
