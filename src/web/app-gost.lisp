@@ -234,13 +234,8 @@
                (postmodern:connected-p postmodern:*database*))
     (postmodern:connect-toplevel "gost" (uiop:getenv "USER") "" "localhost"))
   (reblocks/server:start :port port
-<<<<<<< HEAD
                          :apps '(gosts)
                          :interface (detect-interface)))
-=======
-                         :apps '(root gosts hw)))
->>>>>>> cf9a26d66ca5c588771da4de08f64adbfea58751
-
 (defun stop-gosts ()
   (reblocks/server:stop)
   (when (postmodern:connected-p postmodern:*database*)
@@ -251,10 +246,6 @@
 
 #+nil (start-gosts)
 #+nil (stop-gosts)
-
-<<<<<<< HEAD
-#+nil (defparameter *vsegost-com-Data* "//n133906/home/_namatv/public_html/Site/GOST-2025/Data/")
-=======
 
 (reblocks/widget:defwidget root-page ()
   ())
@@ -290,5 +281,3 @@
 (defmethod reblocks/page:init-page ((app welcome-screen-app) (url-path string) expire-at)
            (check-type expire-at (or null local-time::timestamp))
            "Hello world!")
-
->>>>>>> cf9a26d66ca5c588771da4de08f64adbfea58751
