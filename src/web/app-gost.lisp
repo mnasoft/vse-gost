@@ -225,7 +225,9 @@
 
 (defun detect-interface ()
   (let ((hostname (uiop:getenv "HOSTNAME")))
-    (if (eq (char hostname 0) #\N)
+    (if (and hostname
+             (> (length hostname) 0)
+             (char-equal (char hostname 0) #\N))
         (string-downcase hostname)
         "localhost")))
 
