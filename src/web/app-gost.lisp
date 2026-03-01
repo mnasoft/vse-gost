@@ -3,11 +3,20 @@
 (defparameter *vsegost-com-Data*
   (concatenate 'string (uiop:getenv "HOME") "/public_html/vsegost.com/Data/"))
 
+(defun query-pattern (value)
+  (let ((string-value (if value
+                          (string-trim '(#\Space #\Tab #\Newline #\Return) value)
+                          "")))
+    (if (string= string-value "")
+        "%"
+        (handler-case (mnas-string/db:prepare-to-query string-value)
+          (error () (format nil "%~A%" string-value))))))
+
 (defun gost-table (name designation status)
   (postmodern:query (:select '* :from 'gost :where
-		          (:and (:ilike 'name (mnas-string/db:prepare-to-query name))
-			        (:ilike 'designation (mnas-string/db:prepare-to-query designation))
-			        (:ilike 'status (mnas-string/db:prepare-to-query status))))))
+		          (:and (:ilike 'name (query-pattern name))
+			        (:ilike 'designation (query-pattern designation))
+			        (:ilike 'status (query-pattern status))))))
 
 (defun file-to-base64 (filename)
   (with-open-file (stream filename :element-type '(unsigned-byte 8))
@@ -105,8 +114,7 @@
 (defmethod reblocks/widget:render ((gost-item gost-item))
   (let* ((gost (gost-item-gost gost-item))
          (details-url
-           (route-url "gost-details"
-                      :gost-id (gost-id gost))))
+           (format nil "/apps/gosts/~A" (gost-id gost))))
     (with-html ()
       (:tr 
        ;;(:td :style "border: 1px solid black;" (gost-designation gost))
@@ -141,7 +149,7 @@
   (let ((gost (gost gost-page))
         ;; This is the way how we can get URL path
         ;; pointing to another page without hardcoding it.
-        (list-url (route-url "gosts-list")))
+        (list-url "/apps/gosts/"))
     (reblocks/html:with-html ()
       (:div :style "display: flex; gap: 1rem"
             (:a :href list-url
@@ -199,6 +207,7 @@
                      :name "status"
                      :placeholder "Status")
              (:input :type "submit"
+                   :name "submit"
                      :class "button"
                      :value "Select")))    
     (:table :style "border: 1px solid black; border-collapse: collapse;"
