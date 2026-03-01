@@ -1,23 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-NAME="vsegost-web"
-EXE_NAME="${NAME}.exe"
-SH_NAME="${NAME}.sh"
-SCREEN_NAME="${NAME}-screen.sh"
-BIN_DIR="/usr/local/bin"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# SERVISE_DIR="/usr/lib/systemd/system"
-# SERVICE_NAME="${NAME}.service"
-
-sh BUILD.run
-
-sudo cp -f ./build/${EXE_NAME} ${BIN_DIR}
-sudo chmod +x ${BIN_DIR}/${EXE_NAME}
-
-sudo cp -f ./build/${SH_NAME} ${BIN_DIR}
-sudo chmod +x ${BIN_DIR}/${SH_NAME}
-
-sudo cp -f ${SCREEN_NAME} ${BIN_DIR}
-sudo chmod +x ${BIN_DIR}/${SCREEN_NAME} 
-
-# sudo cp -f ./build/${SERVICE_NAME} ${SERVISE_DIR}
+"${SCRIPT_DIR}/build-install-standalone.sh" install

@@ -23,5 +23,70 @@
 * Запуск сервера
 В отдельной консоли необходимо выполнить
 #+begin_src shell
-  vsegost-web-screen.sh
+  vsegost-web-tmux.sh
+#+end_src
+
+* Standalone сборка/установка (Linux)
+Для standalone используется SBCL-образ с точкой входа
+=vse-gost/web:start-gosts=.
+
+Скрипты находятся в каталоге =src/web/sh=.
+
+** Сборка + установка (рекомендуется)
+#+begin_src shell
+  cd src/web/sh
+  ./build-install-standalone.sh build
+  ./build-install-standalone.sh install
+#+end_src
+
+Без аргументов скрипт показывает справку:
+#+begin_src shell
+  ./build-install-standalone.sh
+#+end_src
+
+Будут установлены команды в =/usr/local/bin=:
+- =vsegost-web=           (standalone бинарник)
+- =vsegost-web.sh=        (обертка запуска)
+- =vsegost-web-tmux.sh=   (запуск в tmux)
+
+** Только сборка
+#+begin_src shell
+  cd src/web/sh
+  ./build-install-standalone.sh build
+#+end_src
+
+Артефакты сборки появляются в =src/web/sh/build/=.
+
+** Только установка
+#+begin_src shell
+  cd src/web/sh
+  ./build-install-standalone.sh install
+#+end_src
+
+** Удаление standalone из /usr/local/bin
+#+begin_src shell
+  cd src/web/sh
+  ./build-install-standalone.sh uninstall
+#+end_src
+
+** Очистка артефактов сборки
+#+begin_src shell
+  cd src/web/sh
+  ./build-install-standalone.sh clean
+#+end_src
+
+** Запуск standalone
+Обычный запуск:
+#+begin_src shell
+  vsegost-web.sh
+#+end_src
+
+Запуск в tmux:
+#+begin_src shell
+  vsegost-web-tmux.sh
+#+end_src
+
+Опционально можно задать имя tmux-сессии:
+#+begin_src shell
+  SESSION_NAME=vsegost-web vsegost-web-tmux.sh
 #+end_src

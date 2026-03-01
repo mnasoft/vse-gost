@@ -1,15 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Создаем каталог сборки
-mkdir -p ./build
-# Перехдим в него
-cd ./build
-# Собираем выполняемый файл
-sh ../build.sh
-# Генерируем файл запуска для sceen
-cp ../vsegost-web-screen.sh .
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BUILD_DIR="${SCRIPT_DIR}/build"
 
-# Генерируем файл сервиса
-# sh ../mk-service.sh
-# cp ../vsegost-web.sh .
+mkdir -p "${BUILD_DIR}"
+
+"${SCRIPT_DIR}/build.sh" "${BUILD_DIR}/vsegost-web"
+cp "${SCRIPT_DIR}/vsegost-web.sh" "${BUILD_DIR}/"
+cp "${SCRIPT_DIR}/vsegost-web-tmux.sh" "${BUILD_DIR}/"
 
