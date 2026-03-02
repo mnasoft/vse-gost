@@ -30,49 +30,44 @@
 Для standalone используется SBCL-образ с точкой входа
 =vse-gost/web:start-gosts=.
 
-Скрипты находятся в каталоге =src/web/sh=.
+Основной скрипт управления standalone: =INSTALL.run= (в корне проекта).
 
 ** Сборка + установка (рекомендуется)
 #+begin_src shell
-  cd src/web/sh
-  ./build-install-standalone.sh build
-  ./build-install-standalone.sh install
+  ./INSTALL.run build
+  ./INSTALL.run install
 #+end_src
 
 Без аргументов скрипт показывает справку:
 #+begin_src shell
-  ./build-install-standalone.sh
+  ./INSTALL.run
 #+end_src
 
 Будут установлены команды в =/usr/local/bin=:
-- =vsegost-web=           (standalone бинарник)
+- =vsegost-web.exe=       (standalone бинарник)
 - =vsegost-web.sh=        (обертка запуска)
 - =vsegost-web-tmux.sh=   (запуск в tmux)
 
 ** Только сборка
 #+begin_src shell
-  cd src/web/sh
-  ./build-install-standalone.sh build
+  ./INSTALL.run build
 #+end_src
 
 Артефакты сборки появляются в =src/web/sh/build/=.
 
 ** Только установка
 #+begin_src shell
-  cd src/web/sh
-  ./build-install-standalone.sh install
+  ./INSTALL.run install
 #+end_src
 
 ** Удаление standalone из /usr/local/bin
 #+begin_src shell
-  cd src/web/sh
-  ./build-install-standalone.sh uninstall
+  ./INSTALL.run uninstall
 #+end_src
 
 ** Очистка артефактов сборки
 #+begin_src shell
-  cd src/web/sh
-  ./build-install-standalone.sh clean
+  ./INSTALL.run clean
 #+end_src
 
 ** Запуск standalone

@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
-OUTPUT_PATH="${1:-${PWD}/vsegost-web}"
+OUTPUT_PATH="${1:-${PWD}/vsegost-web.exe}"
 
 cd "${PROJECT_ROOT}"
 
