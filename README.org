@@ -27,8 +27,11 @@
 #+end_src
 
 * Standalone сборка/установка (Linux)
-Для standalone используется SBCL-образ с точкой входа
-=vse-gost/web:start-gosts=.
+Для standalone используется SBCL-образ без параметра =:toplevel=.
+Запуск выполняется командой:
+#+begin_src shell
+  vsegost-web.exe --eval "(vse-gost/web:start-gosts)"
+#+end_src
 
 Основной скрипт управления standalone: =INSTALL.run= (в корне проекта).
 
@@ -74,6 +77,11 @@
 Обычный запуск:
 #+begin_src shell
   vsegost-web.sh
+#+end_src
+
+Прямой запуск бинарника:
+#+begin_src shell
+  vsegost-web.exe --eval "(vse-gost/web:start-gosts)"
 #+end_src
 
 Запуск в tmux:

@@ -9,6 +9,7 @@ fi
 
 SESSION_NAME="${SESSION_NAME:-vsegost-web}"
 RUN_CMD="${RUN_CMD:-vsegost-web.sh}"
+DEFAULT_EXE_CMD='vsegost-web.exe --eval "(vse-gost/web:start-gosts)"'
 
 if [[ "${RUN_CMD}" == "vsegost-web.sh" ]]; then
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,6 +17,8 @@ if [[ "${RUN_CMD}" == "vsegost-web.sh" ]]; then
     RUN_CMD="${SCRIPT_DIR}/vsegost-web.sh"
   elif command -v vsegost-web.sh >/dev/null 2>&1; then
     RUN_CMD="$(command -v vsegost-web.sh)"
+  else
+    RUN_CMD="${DEFAULT_EXE_CMD}"
   fi
 fi
 

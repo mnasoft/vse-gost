@@ -11,5 +11,5 @@ sbcl --non-interactive \
      --eval "(asdf:load-system :vse-gost/web)" \
      --eval "(sb-ext:save-lisp-and-die \"${OUTPUT_PATH}\" :executable t :compression t)"
 
-# :toplevel #'vse-gost/web:start-gosts
+# Запуск скомпилированного бинарника:
 # vsegost-web.exe --eval "(vse-gost/web:start-gosts)"
