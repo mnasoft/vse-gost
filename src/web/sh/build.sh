@@ -9,4 +9,7 @@ cd "${PROJECT_ROOT}"
 
 sbcl --non-interactive \
      --eval "(asdf:load-system :vse-gost/web)" \
-     --eval "(sb-ext:save-lisp-and-die \"${OUTPUT_PATH}\" :toplevel #'vse-gost/web:start-gosts :executable t :compression t)"
+     --eval "(sb-ext:save-lisp-and-die \"${OUTPUT_PATH}\" :executable t :compression t)"
+
+# :toplevel #'vse-gost/web:start-gosts
+# vsegost-web.exe --eval "(vse-gost/web:start-gosts)"
