@@ -1,7 +1,7 @@
 ;;;; vse-gost.asd
 
 (defsystem "vse-gost"
-  :version "1.1.0"
+  :version "1.1.1"
   :description #.(uiop:read-file-string "doc/long-description.txt")
   :long-description #.(uiop:read-file-string "doc/long-description.txt")
   :perform (load-op (op system)
