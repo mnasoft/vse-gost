@@ -49,31 +49,35 @@
 ** Запускаем сервер баз данных
 #+begin_src cmd
   chcp 1251
-  D:\home\_namatv\PRG\msys64\ucrt64\bin\pg_ctl -D D:/home/_namatv/PRG/msys64/var/lib/postgres/data -l log_file start
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\pg_ctl" -D D:/home/_namatv/PRG/msys64/var/lib/postgres/data -l log_file start
 #+end_src
 
 ** Пример останова сервера баз данных
 #+begin_src cmd
   chcp 1251
-  D:\home\_namatv\PRG\msys64\ucrt64\bin\pg_ctl -D D:/home/_namatv/PRG/msys64/var/lib/postgres/data -l log_file stop
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\pg_ctl" -D D:/home/_namatv/PRG/msys64/var/lib/postgres/data -l log_file stop
 #+end_src
 
 ** Создаем БД
 
-#+begin_src shell
+#+begin_src cmd
   chcp 1251
-  D:\home\_namatv\PRG\msys64\ucrt64\bin\createdb gost
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\createdb" gost
 #+end_src
 
 ** Входим в консоль postgresql
-#+begin_src shell
-  D:\home\_namatv\PRG\msys64\ucrt64\bin\psql -d gost
+#+begin_src cmd
+   chcp 1251
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\psql" -d gost
 #+end_src
 
 ** Создаем таблицу gost
-В базе данных gost создаем таблицу gost.
-
-Примечание: поле external_path - удалено. 
+В базе данных gost создаем таблицу gost для пользователя namatv.
+Файл n133906-GOST.sql должен быть в кодировке ANSI (cp1251).
+#+begin_src cmd
+  chcp 1251
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\psql" -d gost -f d:\home\_namatv\PRG\msys64\home\namatv\quicklisp\local-projects\clisp\vse-gost\sql\n133906-GOST.sql
+#+end_src
 
 ** Перекодируем файл out.txt
 1.) Открываем в notepad.
@@ -81,6 +85,18 @@
 
 ** Импортируем содержимое таблицы gost из файла:
 
+** Дамп и восстановление БД
+#+caption: Дамп БД gost
+#+name: gost-dump
+#+begin_src cmd
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\pg_dump.exe" gost > gost_dump.sql
+#+end_src
+
+#+caption: Дамп БД gost
+#+name: gost-restore
+#+begin_src cmd
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\psql" -d gost -f d:\home\_namatv\gost_dump.sql
+#+end_src
+
 * Последующие действия
 См. проект mnas-web.
-
