@@ -79,9 +79,6 @@
     ("SLY.png"         "https://github.com/joaotavora/sly"  "SLY")
     ("40ants.png"      "https://40ants.com/reblocks"        "Reblocks")))
 
-(defparameter *img-logos-path*
-  "~/public_html/images/logos/")
-
 (defparameter *img-ref-data*
   (loop :for (png http name) :in *imges*
         :when (probe-file (mnas-path:pathname-merge *img-logos-path* png))

@@ -1,8 +1,5 @@
 (in-package #:vse-gost/web)
 
-(defparameter *vsegost-com-Data*
-  (concatenate 'string (uiop:getenv "HOME") "/public_html/vsegost.com/Data/"))
-
 (defun query-pattern (value)
   (let ((string-value (if value
                           (string-trim '(#\Space #\Tab #\Newline #\Return) value)

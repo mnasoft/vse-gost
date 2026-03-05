@@ -34,7 +34,8 @@
                "hunchentoot")
   :components ((:module "src/web"
 		:serial nil
-                :components ((:file "web")
+                :components ((:file "package")
+                             (:file "defparameter")
                              (:file "app-hw")
                              (:file "app-task")
                              (:file "app-gost")
