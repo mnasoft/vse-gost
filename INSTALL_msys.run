@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SH_DIR="${PROJECT_ROOT}/src/web/sh"
+BUILD_DIR="${SH_DIR}/build"
+BIN_DIR="${BIN_DIR:-/usr/local/bin}"
+
+MODE="${1:---help}"
+
+print_help() {
+  cat <<EOF
+Usage:
+  $(basename "$0") [build|install|uninstall|clean]
+
+Modes:
+  build    Build standalone binary and launcher scripts into build directory.
+  install  Install artifacts to BIN_DIR (build is auto-run if needed).
+  uninstall Remove installed files from BIN_DIR.
+  clean    Remove local build artifacts from build directory.
+
+Environment variables:
+  BIN_DIR  Target directory for installation (default: /usr/local/bin)
+
+Examples:
+  $(basename "$0")
+  $(basename "$0") build
+  $(basename "$0") clean
+  BIN_DIR="${HOME}/.local/bin" $(basename "$0") install
+EOF
+}
+
+build_artifacts() {
+  mkdir -p "${BUILD_DIR}"
+  "${SH_DIR}/build.sh" "${BUILD_DIR}/vsegost-web.exe"
+  cp "${SH_DIR}/vsegost-web.sh" "${BUILD_DIR}/"
+  cp "${SH_DIR}/vsegost-web-tmux.sh" "${BUILD_DIR}/"
+}
+
+install_artifacts() {
+  if [[ ! -x "${BUILD_DIR}/vsegost-web.exe" ]]; then
+    echo "Standalone binary not found in ${BUILD_DIR}. Running build first."
+    build_artifacts
+  fi
+
+   install -m 0755 "${BUILD_DIR}/vsegost-web.exe" "${BIN_DIR}/vsegost-web.exe"
+   install -m 0755 "${BUILD_DIR}/vsegost-web.sh" "${BIN_DIR}/vsegost-web.sh"
+   install -m 0755 "${BUILD_DIR}/vsegost-web-tmux.sh" "${BIN_DIR}/vsegost-web-tmux.sh"
+}
+
+uninstall_artifacts() {
+  sudo rm -f "${BIN_DIR}/vsegost-web.exe" \
+             "${BIN_DIR}/vsegost-web.sh" \
+             "${BIN_DIR}/vsegost-web-tmux.sh"
+}
+
+clean_artifacts() {
+  if [[ -d "${BUILD_DIR}" ]]; then
+    find "${BUILD_DIR}" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+  fi
+}
+
+case "${MODE}" in
+  -h|--help|help)
+    print_help
+    exit 0
+    ;;
+  build)
+    build_artifacts
+    ;;
+  install)
+    install_artifacts
+    ;;
+  uninstall)
+    uninstall_artifacts
+    ;;
+  clean)
+    clean_artifacts
+    ;;
+  *)
+    echo "Unknown mode: ${MODE}" >&2
+    print_help
+    exit 1
+    ;;
+esac
+
+echo "Done: mode=${MODE}, build=${BUILD_DIR}, bin=${BIN_DIR}"
