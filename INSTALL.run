@@ -8,6 +8,23 @@ BIN_DIR="${BIN_DIR:-/usr/local/bin}"
 
 MODE="${1:---help}"
 
+# Detect system type and set up sudo prefix accordingly
+# On MSYS2/Windows, sudo is not available and not needed
+detect_system() {
+  if [ -n "$MSYSTEM" ] || uname -o 2>/dev/null | grep -iq "msys\|mingw\|cygwin"; then
+    echo "msys2"
+  else
+    echo "linux"
+  fi
+}
+
+SYSTEM="$(detect_system)"
+if [ "$SYSTEM" = "msys2" ]; then
+  SUDO=""
+else
+  SUDO="sudo"
+fi
+
 print_help() {
   cat <<EOF
 Usage:
@@ -43,13 +60,13 @@ install_artifacts() {
     build_artifacts
   fi
 
-  sudo install -m 0755 "${BUILD_DIR}/vsegost-web.exe" "${BIN_DIR}/vsegost-web.exe"
-  sudo install -m 0755 "${BUILD_DIR}/vsegost-web.sh" "${BIN_DIR}/vsegost-web.sh"
-  sudo install -m 0755 "${BUILD_DIR}/vsegost-web-tmux.sh" "${BIN_DIR}/vsegost-web-tmux.sh"
+  $SUDO install -m 0755 "${BUILD_DIR}/vsegost-web.exe" "${BIN_DIR}/vsegost-web.exe"
+  $SUDO install -m 0755 "${BUILD_DIR}/vsegost-web.sh" "${BIN_DIR}/vsegost-web.sh"
+  $SUDO install -m 0755 "${BUILD_DIR}/vsegost-web-tmux.sh" "${BIN_DIR}/vsegost-web-tmux.sh"
 }
 
 uninstall_artifacts() {
-  sudo rm -f "${BIN_DIR}/vsegost-web.exe" \
+  $SUDO rm -f "${BIN_DIR}/vsegost-web.exe" \
              "${BIN_DIR}/vsegost-web.sh" \
              "${BIN_DIR}/vsegost-web-tmux.sh"
 }
