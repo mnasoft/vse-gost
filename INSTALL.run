@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "##################################################"
+echo "${BASH_SOURCE[0]} START ..."
+echo "##################################################"
+
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SH_DIR="${PROJECT_ROOT}/src/web/sh"
 BUILD_DIR="${SH_DIR}/build"
@@ -8,24 +12,10 @@ BIN_DIR="${BIN_DIR:-/usr/local/bin}"
 
 MODE="${1:---help}"
 
-# Detect system type and set up sudo prefix accordingly
-# On MSYS2/Windows, sudo is not available and not needed
-detect_system() {
-  if [ -n "$MSYSTEM" ] || uname -o 2>/dev/null | grep -iq "msys\|mingw\|cygwin"; then
-    echo "msys2"
-  else
-    echo "linux"
-  fi
-}
+##################################################
+#### functions
 
-SYSTEM="$(detect_system)"
-if [ "$SYSTEM" = "msys2" ]; then
-  SUDO=""
-else
-  SUDO="sudo"
-fi
-
-print_help() {
+usage() {
   cat <<EOF
 Usage:
   $(basename "$0") [build|install|uninstall|clean]
@@ -45,6 +35,16 @@ Examples:
   $(basename "$0") clean
   BIN_DIR="${HOME}/.local/bin" $(basename "$0") install
 EOF
+}
+
+# Detect system type and set up sudo prefix accordingly
+# On MSYS2/Windows, sudo is not available and not needed
+detect_system() {
+  if [ -n "$MSYSTEM" ] || uname -o 2>/dev/null | grep -iq "msys\|mingw\|cygwin"; then
+    echo "msys2"
+  else
+    echo "linux"
+  fi
 }
 
 build_artifacts() {
@@ -77,9 +77,25 @@ clean_artifacts() {
   fi
 }
 
+##################################################
+#### Разбор аргументов
+
+echo "PROJECT_ROOT=${PROJECT_ROOT}"
+echo "SH_DIR=${SH_DIR}"
+BUILD_DIR="${SH_DIR}/build"
+BIN_DIR="${BIN_DIR:-/usr/local/bin}"
+
+
+SYSTEM="$(detect_system)"
+
+if [ "$SYSTEM" = "msys2" ]
+then  SUDO=""
+else  SUDO="sudo"
+fi
+
 case "${MODE}" in
   -h|--help|help)
-    print_help
+    usage
     exit 0
     ;;
   build)
@@ -96,9 +112,13 @@ case "${MODE}" in
     ;;
   *)
     echo "Unknown mode: ${MODE}" >&2
-    print_help
+    usage
     exit 1
     ;;
 esac
 
 echo "Done: mode=${MODE}, build=${BUILD_DIR}, bin=${BIN_DIR}"
+
+echo "##################################################"
+echo "${BASH_SOURCE[0]} DONE"
+echo "##################################################"

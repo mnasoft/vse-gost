@@ -8,16 +8,16 @@
 * Проект *vse-gost* содержит инструкции по:
 1. [[./org/instruction-mirroring.org][Зеркалированию сайта vse-gost.com]]
 2. [[./org/instruction-import-file.org][Генерированию файла импорта для ДБ PostgreSQL]]
-3. [[./org/instruction-postgesql.org][Установке и настройке PostgreSql]]
+3. [[./org/instruction-postgesql.org][Установке и настройке PostgreSQL]]
 4. [[./org/instruction-gost.org][Созданию базы данных gost]]
 5. [[./org/instruction-build-web-app.org][Сборке выполняемого файла, запускающего веб-сервер]]
 6. [[file:org/instruction-start-web-app.org][Запуску веб приложения]]
-** Конвертирование gif-файлов в формат pdf 
+* Конвертирование gif-файлов в формат pdf 
 Конвертирование gif-файлов в формат pdf - можно выполнить сторонней
 утилитой gif_to_pdf.sh из пакета
 [[https://github.com/mnasoft/convert_git_to_pdf/]].
 
-** Последующие действия
+* Последующие действия
 См. проект vse-gost/web.
 
 * Запуск сервера
@@ -93,3 +93,4 @@
 #+begin_src shell
   SESSION_NAME=vsegost-web vsegost-web-tmux.sh
 #+end_src
+* [[file:org/n133906.org]]
