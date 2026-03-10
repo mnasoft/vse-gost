@@ -70,23 +70,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defparameter *imges*
-  '(("MNASoft.png"     "https://mnasoft.ddns.net"           "MNASoft")
-    ("ArchLinux.png"   "https://archlinux.org"              "ArchLinux")
-    ("Common-Lisp.png" "https://common-lisp.net"            "Common-Lisp")
-    ("SBCL.png"        "https://sbcl.org"                   "SBCL")
-    ("Emacs.png"       "https://www.gnu.org/software/emacs" "Emacs")
-    ("SLY.png"         "https://github.com/joaotavora/sly"  "SLY")
-    ("40ants.png"      "https://40ants.com/reblocks"        "Reblocks")))
 
-(defparameter *img-ref-data*
-  (loop :for (png http name) :in *imges*
-        :when (probe-file (mnas-path:pathname-merge *img-logos-path* png))
-          :collect 
-          (list
-           (probe-file (mnas-path:pathname-merge *img-logos-path* png))
-           http
-           name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; tests
