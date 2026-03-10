@@ -40,7 +40,7 @@ EOF
 # Detect system type and set up sudo prefix accordingly
 # On MSYS2/Windows, sudo is not available and not needed
 detect_system() {
-  if [ -n "$MSYSTEM" ] || uname -o 2>/dev/null | grep -iq "msys\|mingw\|cygwin"; then
+  if [ -n "${MSYSTEM-}" ] || uname -o 2>/dev/null | grep -iq "msys\|mingw\|cygwin"; then
     echo "msys2"
   else
     echo "linux"
