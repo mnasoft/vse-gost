@@ -50,6 +50,7 @@
 - =vsegost-web.exe=       (standalone бинарник)
 - =vsegost-web.sh=        (обертка запуска)
 - =vsegost-web-tmux.sh=   (запуск в tmux)
+- =vsegost-web-mk-service.sh= (генерация/установка systemd unit)
 
 ** Только сборка
 #+begin_src shell
@@ -71,6 +72,21 @@
 ** Очистка артефактов сборки
 #+begin_src shell
   ./INSTALL.run clean
+#+end_src
+
+** Установка systemd-сервиса
+#+begin_src shell
+  ./INSTALL.run service-install
+#+end_src
+
+** Статус systemd-сервиса
+#+begin_src shell
+  ./INSTALL.run service-status
+#+end_src
+
+** Удаление systemd-сервиса
+#+begin_src shell
+  ./INSTALL.run service-uninstall
 #+end_src
 
 ** Запуск standalone

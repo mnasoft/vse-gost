@@ -18,16 +18,22 @@ MODE="${1:---help}"
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [build|install|uninstall|clean]
+  $(basename "$0") [build|install|uninstall|clean|service-install|service-status|service-uninstall]
 
 Modes:
-  build    Build standalone binary and launcher scripts into build directory.
-  install  Install artifacts to BIN_DIR (build is auto-run if needed).
-  uninstall Remove installed files from BIN_DIR.
-  clean    Remove local build artifacts from build directory.
+  build             Build standalone binary and launcher scripts into build directory.
+  install           Install artifacts to BIN_DIR (build is auto-run if needed).
+  uninstall         Remove installed files from BIN_DIR.
+  clean             Remove local build artifacts from build directory.
+  service-install   Install and enable systemd service (${SERVICE_NAME:-vsegost-web}.service).
+    service-status    Show systemd service status (${SERVICE_NAME:-vsegost-web}.service).
+  service-uninstall Stop, disable and remove systemd service (${SERVICE_NAME:-vsegost-web}.service).
 
 Environment variables:
-  BIN_DIR  Target directory for installation (default: /usr/local/bin)
+  BIN_DIR       Target directory for installation (default: /usr/local/bin)
+  SERVICE_NAME  systemd unit base name (default: vsegost-web)
+  SERVICE_USER  service user (default: current user)
+  SESSION_NAME  tmux session name (default: vsegost-web)
 
 Examples:
   $(basename "$0")
@@ -47,11 +53,19 @@ detect_system() {
   fi
 }
 
+service_supported() {
+  if [ "${SYSTEM}" = "msys2" ]; then
+    return 1
+  fi
+  command -v systemctl >/dev/null 2>&1
+}
+
 build_artifacts() {
   mkdir -p "${BUILD_DIR}"
   "${SH_DIR}/build.sh" "${BUILD_DIR}/vsegost-web.exe"
   cp "${SH_DIR}/vsegost-web.sh" "${BUILD_DIR}/"
   cp "${SH_DIR}/vsegost-web-tmux.sh" "${BUILD_DIR}/"
+  cp "${SH_DIR}/mk-service.sh" "${BUILD_DIR}/"
 }
 
 install_artifacts() {
@@ -61,14 +75,70 @@ install_artifacts() {
   fi
 
   $SUDO install -m 0755 "${BUILD_DIR}/vsegost-web.exe" "${BIN_DIR}/vsegost-web.exe"
-  $SUDO install -m 0755 "${BUILD_DIR}/vsegost-web.sh" "${BIN_DIR}/vsegost-web.sh"
-  $SUDO install -m 0755 "${BUILD_DIR}/vsegost-web-tmux.sh" "${BIN_DIR}/vsegost-web-tmux.sh"
+  $SUDO install -m 0755 "${SH_DIR}/vsegost-web.sh" "${BIN_DIR}/vsegost-web.sh"
+  $SUDO install -m 0755 "${SH_DIR}/vsegost-web-tmux.sh" "${BIN_DIR}/vsegost-web-tmux.sh"
+  $SUDO install -m 0755 "${SH_DIR}/mk-service.sh" "${BIN_DIR}/vsegost-web-mk-service.sh"
 }
 
 uninstall_artifacts() {
   $SUDO rm -f "${BIN_DIR}/vsegost-web.exe" \
              "${BIN_DIR}/vsegost-web.sh" \
-             "${BIN_DIR}/vsegost-web-tmux.sh"
+             "${BIN_DIR}/vsegost-web-tmux.sh" \
+             "${BIN_DIR}/vsegost-web-mk-service.sh"
+}
+
+service_install() {
+  local mk_service_cmd
+  mk_service_cmd="${BIN_DIR}/vsegost-web-mk-service.sh"
+
+  if ! service_supported; then
+    echo "systemd/systemctl is not available on this system." >&2
+    exit 1
+  fi
+
+  if [[ ! -x "${mk_service_cmd}" ]]; then
+    echo "${mk_service_cmd} not found. Running install first."
+    install_artifacts
+  fi
+
+  SERVICE_NAME="${SERVICE_NAME:-vsegost-web}" \
+  SERVICE_USER="${SERVICE_USER:-${USER}}" \
+  SESSION_NAME="${SESSION_NAME:-vsegost-web}" \
+  TMUX_SCRIPT="${BIN_DIR}/vsegost-web-tmux.sh" \
+    "${mk_service_cmd}"
+
+  echo "Starting service ${SERVICE_NAME:-vsegost-web}"
+  sudo systemctl start "${SERVICE_NAME:-vsegost-web}"
+}
+
+service_uninstall() {
+  local service_name
+  local unit_path
+  service_name="${SERVICE_NAME:-vsegost-web}"
+  unit_path="/etc/systemd/system/${service_name}.service"
+
+  if ! service_supported; then
+    echo "systemd/systemctl is not available on this system." >&2
+    exit 1
+  fi
+
+  sudo systemctl stop "${service_name}" || true
+  sudo systemctl disable "${service_name}" || true
+  sudo rm -f "${unit_path}"
+  sudo systemctl daemon-reload
+  echo "Removed service: ${service_name}.service"
+}
+
+service_status() {
+  local service_name
+  service_name="${SERVICE_NAME:-vsegost-web}"
+
+  if ! service_supported; then
+    echo "systemd/systemctl is not available on this system." >&2
+    exit 1
+  fi
+
+  systemctl status "${service_name}"
 }
 
 clean_artifacts() {
@@ -109,6 +179,15 @@ case "${MODE}" in
     ;;
   clean)
     clean_artifacts
+    ;;
+  service-install)
+    service_install
+    ;;
+  service-status)
+    service_status
+    ;;
+  service-uninstall)
+    service_uninstall
     ;;
   *)
     echo "Unknown mode: ${MODE}" >&2

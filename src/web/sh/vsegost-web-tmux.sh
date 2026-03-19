@@ -10,6 +10,7 @@ fi
 SESSION_NAME="${SESSION_NAME:-vsegost-web}"
 RUN_CMD="${RUN_CMD:-vsegost-web.sh}"
 DEFAULT_EXE_CMD='vsegost-web.exe --eval "(vse-gost/web:start-gosts)"'
+ACTION="${1:-start}"
 
 is_msys2() {
   case "$(uname -s 2>/dev/null || true)" in
@@ -50,24 +51,66 @@ if [[ "${RUN_CMD}" == "vsegost-web.sh" ]]; then
   fi
 fi
 
-if tmux has-session -t "${SESSION_NAME}" 2>/dev/null; then
-  echo "tmux session '${SESSION_NAME}' already exists."
+start_session() {
+  if tmux has-session -t "${SESSION_NAME}" 2>/dev/null; then
+    echo "tmux session '${SESSION_NAME}' already exists."
+    echo "Attach with: tmux attach -t ${SESSION_NAME}"
+    return 0
+  fi
+
+  if is_msys2 && [[ "${START_POSTGRES_ON_MSYS2:-1}" == "1" ]]; then
+    start_postgresql_msys2
+  fi
+
+  tmux new-session -d -s "${SESSION_NAME}" "bash -lc '${RUN_CMD}'"
+
+  sleep 0.2
+  if ! tmux has-session -t "${SESSION_NAME}" 2>/dev/null; then
+    echo "Failed to start tmux session '${SESSION_NAME}'." >&2
+    echo "Check command: ${RUN_CMD}" >&2
+    return 1
+  fi
+
+  echo "Started tmux session: ${SESSION_NAME}"
   echo "Attach with: tmux attach -t ${SESSION_NAME}"
-  exit 0
-fi
+}
 
-if is_msys2 && [[ "${START_POSTGRES_ON_MSYS2:-1}" == "1" ]]; then
-  start_postgresql_msys2
-fi
+stop_session() {
+  if ! tmux has-session -t "${SESSION_NAME}" 2>/dev/null; then
+    echo "tmux session '${SESSION_NAME}' is not running."
+    return 0
+  fi
 
-tmux new-session -d -s "${SESSION_NAME}" "bash -lc '${RUN_CMD}'"
+  tmux kill-session -t "${SESSION_NAME}"
+  echo "Stopped tmux session: ${SESSION_NAME}"
+}
 
-sleep 0.2
-if ! tmux has-session -t "${SESSION_NAME}" 2>/dev/null; then
-  echo "Failed to start tmux session '${SESSION_NAME}'." >&2
-  echo "Check command: ${RUN_CMD}" >&2
-  exit 1
-fi
+status_session() {
+  if tmux has-session -t "${SESSION_NAME}" 2>/dev/null; then
+    echo "running"
+    return 0
+  fi
 
-echo "Started tmux session: ${SESSION_NAME}"
-echo "Attach with: tmux attach -t ${SESSION_NAME}"
+  echo "stopped"
+  return 1
+}
+
+case "${ACTION}" in
+  start)
+    start_session
+    ;;
+  stop)
+    stop_session
+    ;;
+  status)
+    status_session
+    ;;
+  restart)
+    stop_session
+    start_session
+    ;;
+  *)
+    echo "Usage: $(basename "$0") [start|stop|status|restart]" >&2
+    exit 2
+    ;;
+esac
