@@ -8,16 +8,16 @@
 * Проект *vse-gost* содержит инструкции по:
 1. [[./org/instruction-mirroring.org][Зеркалированию сайта vse-gost.com]]
 2. [[./org/instruction-import-file.org][Генерированию файла импорта для ДБ PostgreSQL]]
-3. [[./org/instruction-postgesql.org][Установке и настройке PostgreSql]]
+3. [[./org/instruction-postgesql.org][Установке и настройке PostgreSQL]]
 4. [[./org/instruction-gost.org][Созданию базы данных gost]]
 5. [[./org/instruction-build-web-app.org][Сборке выполняемого файла, запускающего веб-сервер]]
 6. [[file:org/instruction-start-web-app.org][Запуску веб приложения]]
-** Конвертирование gif-файлов в формат pdf 
+* Конвертирование gif-файлов в формат pdf 
 Конвертирование gif-файлов в формат pdf - можно выполнить сторонней
 утилитой gif_to_pdf.sh из пакета
 [[https://github.com/mnasoft/convert_git_to_pdf/]].
 
-** Последующие действия
+* Последующие действия
 См. проект vse-gost/web.
 
 * Запуск сервера
@@ -33,44 +33,60 @@
   vsegost-web.exe --eval "(vse-gost/web:start-gosts)"
 #+end_src
 
-Основной скрипт управления standalone: =INSTALL.run= (в корне проекта).
+Основной скрипт управления standalone: =INSTALL.sh= (в корне проекта).
 
 ** Сборка + установка (рекомендуется)
 #+begin_src shell
-  ./INSTALL.run build
-  ./INSTALL.run install
+  ./INSTALL.sh build
+  ./INSTALL.sh install
 #+end_src
 
 Без аргументов скрипт показывает справку:
 #+begin_src shell
-  ./INSTALL.run
+  ./INSTALL.sh
 #+end_src
 
 Будут установлены команды в =/usr/local/bin=:
 - =vsegost-web.exe=       (standalone бинарник)
 - =vsegost-web.sh=        (обертка запуска)
 - =vsegost-web-tmux.sh=   (запуск в tmux)
+- =vsegost-web-mk-service.sh= (генерация/установка systemd unit)
 
 ** Только сборка
 #+begin_src shell
-  ./INSTALL.run build
+  ./INSTALL.sh build
 #+end_src
 
 Артефакты сборки появляются в =src/web/sh/build/=.
 
 ** Только установка
 #+begin_src shell
-  ./INSTALL.run install
+  ./INSTALL.sh install
 #+end_src
 
 ** Удаление standalone из /usr/local/bin
 #+begin_src shell
-  ./INSTALL.run uninstall
+  ./INSTALL.sh uninstall
 #+end_src
 
 ** Очистка артефактов сборки
 #+begin_src shell
-  ./INSTALL.run clean
+  ./INSTALL.sh clean
+#+end_src
+
+** Установка systemd-сервиса
+#+begin_src shell
+  ./INSTALL.sh service-install
+#+end_src
+
+** Статус systemd-сервиса
+#+begin_src shell
+  ./INSTALL.sh service-status
+#+end_src
+
+** Удаление systemd-сервиса
+#+begin_src shell
+  ./INSTALL.sh service-uninstall
 #+end_src
 
 ** Запуск standalone
@@ -93,3 +109,4 @@
 #+begin_src shell
   SESSION_NAME=vsegost-web vsegost-web-tmux.sh
 #+end_src
+* [[file:org/n133906.org]]

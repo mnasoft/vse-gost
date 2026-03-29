@@ -12,26 +12,23 @@
   vsegost-web.exe --eval "(vse-gost/web:start-gosts)"
 #+end_src
 
-/etc/systemd/system/vsegost-web.service
+Создание и установка systemd-сервиса
 #+begin_src sh
-  #
-  SERVICE_NAME="vsegost-web"
-  SERVICE_FNAME="/etc/systemd/system/${SERVICE_NAME}.service"
-  sudo echo "" > ${SERVICE_FNAME}
-  sudo echo "[Unit]" >> ${SERVICE_FNAME}
-  sudo echo "Description=${SERVICE_NAME}" >> ${SERVICE_FNAME}
-  sudo echo "After=network.target" >> ${SERVICE_FNAME}
-  sudo echo "" >> ${SERVICE_FNAME}
-  sudo echo "[Service]" >> ${SERVICE_FNAME}
-  sudo echo "ExecStart=/usr/local/bin/vsegost-web.sh" >> ${SERVICE_FNAME}
-  sudo echo "Restart=always" >> ${SERVICE_FNAME}
-  sudo echo "User=root" >> ${SERVICE_FNAME}
-  sudo echo "WorkingDirectory=/usr/local/bin" >> ${SERVICE_FNAME}
-  sudo echo "StandardOutput=syslog" >> ${SERVICE_FNAME}
-  sudo echo "StandardError=syslog" >> ${SERVICE_FNAME}
-  sudo echo "" >> ${SERVICE_FNAME}
-  sudo echo "[Install]" >> ${SERVICE_FNAME}
-  sudo echo "WantedBy=multi-user.target" >> ${SERVICE_FNAME}
+  # Рекомендуемый вариант через общий установщик:
+  ./INSTALL.run install
+  ./INSTALL.run service-install
+  ./INSTALL.run service-status
+
+  # Локальный вариант из каталога скриптов:
+  cd src/web/sh
+  chmod +x vsegost-web-tmux.sh mk-service.sh
+  ./mk-service.sh
+
+  sudo systemctl start vsegost-web
+  systemctl status vsegost-web
+
+  # Остановить
+  sudo systemctl stop vsegost-web
 #+end_src
 
 #+RESULTS:

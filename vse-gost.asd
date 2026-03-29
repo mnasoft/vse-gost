@@ -2,8 +2,8 @@
 
 (defsystem "vse-gost"
   :version "1.1.1"
-  :description #.(uiop:read-file-string "doc/long-description.txt")
-  :long-description #.(uiop:read-file-string "doc/long-description.txt")
+  :description #.(uiop:read-file-string "README.org")
+  :long-description #.(uiop:read-file-string "doc/long-description.org")
   :perform (load-op (op system)
              (format t "~&Загрузка завершена!~%")
              (format t "~&Описание системы: ~A~%" 
@@ -34,7 +34,8 @@
                "hunchentoot")
   :components ((:module "src/web"
 		:serial nil
-                :components ((:file "web")
+                :components ((:file "package")
+                             (:file "defparameter")
                              (:file "app-hw")
                              (:file "app-task")
                              (:file "app-gost")
