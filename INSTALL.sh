@@ -1,24 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "##################################################"
-echo "${BASH_SOURCE[0]} START ..."
-echo "##################################################"
-
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SH_DIR="${PROJECT_ROOT}/src/web/sh"
-BUILD_DIR="${SH_DIR}/build"
-BIN_DIR="${BIN_DIR:-/usr/local/bin}"
-
-MODE="${1:---help}"
-
 ##################################################
 #### functions
 
 usage() {
   cat <<EOF
 Usage:
-  $(basename "$0") [build|install|uninstall|clean|service-install|service-status|service-uninstall]
+  $(basename "$0") [build|clean]
+  $(basename "$0") [install|uninstall]
+  $(service_usage)
 
 Modes:
   build             Build standalone binary and launcher scripts into build directory.
@@ -26,14 +17,16 @@ Modes:
   uninstall         Remove installed files from BIN_DIR.
   clean             Remove local build artifacts from build directory.
   service-install   Install and enable systemd service (${SERVICE_NAME:-vsegost-web}.service).
-    service-status    Show systemd service status (${SERVICE_NAME:-vsegost-web}.service).
+  service-status    Show systemd service status (${SERVICE_NAME:-vsegost-web}.service).
   service-uninstall Stop, disable and remove systemd service (${SERVICE_NAME:-vsegost-web}.service).
 
-Environment variables:
+Environment_variables:
   BIN_DIR       Target directory for installation (default: /usr/local/bin)
   SERVICE_NAME  systemd unit base name (default: vsegost-web)
   SERVICE_USER  service user (default: current user)
   SESSION_NAME  tmux session name (default: vsegost-web)
+
+$(echo_vars)
 
 Examples:
   $(basename "$0")
@@ -46,18 +39,27 @@ EOF
 # Detect system type and set up sudo prefix accordingly
 # On MSYS2/Windows, sudo is not available and not needed
 detect_system() {
-  if [ -n "${MSYSTEM-}" ] || uname -o 2>/dev/null | grep -iq "msys\|mingw\|cygwin"; then
-    echo "msys2"
-  else
-    echo "linux"
-  fi
+    if (uname -o 2>/dev/null | grep -iq "msys\|mingw\|cygwin")
+    then
+        echo "msys2"
+    else
+        echo "linux"
+    fi
 }
 
 service_supported() {
-  if [ "${SYSTEM}" = "msys2" ]; then
-    return 1
-  fi
-  command -v systemctl >/dev/null 2>&1
+    if [ "${SYSTEM}" = "msys2" ]
+    then
+        return 1
+    fi
+    command -v systemctl >/dev/null 2>&1
+}
+
+service_usage() {
+    if service_supported
+    then
+        echo "$(basename "$0") [service-install|service-status|service-uninstall]"
+    fi
 }
 
 build_artifacts() {
@@ -69,10 +71,11 @@ build_artifacts() {
 }
 
 install_artifacts() {
-  if [[ ! -x "${BUILD_DIR}/vsegost-web.exe" ]]; then
-    echo "Standalone binary not found in ${BUILD_DIR}. Running build first."
-    build_artifacts
-  fi
+    if [[ ! -x "${BUILD_DIR}/vsegost-web.exe" ]]
+    then
+        echo "Standalone binary not found in ${BUILD_DIR}. Running build first."
+        build_artifacts
+    fi
 
   $SUDO install -m 0755 "${BUILD_DIR}/vsegost-web.exe" "${BIN_DIR}/vsegost-web.exe"
   $SUDO install -m 0755 "${SH_DIR}/vsegost-web.sh" "${BIN_DIR}/vsegost-web.sh"
@@ -81,19 +84,21 @@ install_artifacts() {
 }
 
 uninstall_artifacts() {
-  $SUDO rm -f "${BIN_DIR}/vsegost-web.exe" \
-             "${BIN_DIR}/vsegost-web.sh" \
-             "${BIN_DIR}/vsegost-web-tmux.sh" \
-             "${BIN_DIR}/vsegost-web-mk-service.sh"
+    $SUDO rm -f \
+          "${BIN_DIR}/vsegost-web.exe" \
+          "${BIN_DIR}/vsegost-web.sh" \
+          "${BIN_DIR}/vsegost-web-tmux.sh" \
+          "${BIN_DIR}/vsegost-web-mk-service.sh"
 }
 
 service_install() {
   local mk_service_cmd
   mk_service_cmd="${BIN_DIR}/vsegost-web-mk-service.sh"
 
-  if ! service_supported; then
-    echo "systemd/systemctl is not available on this system." >&2
-    exit 1
+  if ! service_supported
+  then
+      echo "systemd/systemctl is not available on this system." >&2
+      exit 1
   fi
 
   if [[ ! -x "${mk_service_cmd}" ]]; then
@@ -105,10 +110,10 @@ service_install() {
   SERVICE_USER="${SERVICE_USER:-${USER}}" \
   SESSION_NAME="${SESSION_NAME:-vsegost-web}" \
   TMUX_SCRIPT="${BIN_DIR}/vsegost-web-tmux.sh" \
-    "${mk_service_cmd}"
+  "${mk_service_cmd}"
 
   echo "Starting service ${SERVICE_NAME:-vsegost-web}"
-  sudo systemctl start "${SERVICE_NAME:-vsegost-web}"
+  $SUDO systemctl start "${SERVICE_NAME:-vsegost-web}"
 }
 
 service_uninstall() {
@@ -122,10 +127,10 @@ service_uninstall() {
     exit 1
   fi
 
-  sudo systemctl stop "${service_name}" || true
-  sudo systemctl disable "${service_name}" || true
-  sudo rm -f "${unit_path}"
-  sudo systemctl daemon-reload
+  $SUDO systemctl stop "${service_name}" || true
+  $SUDO systemctl disable "${service_name}" || true
+  $SUDO rm -f "${unit_path}"
+  $SUDO systemctl daemon-reload
   echo "Removed service: ${service_name}.service"
 }
 
@@ -142,19 +147,56 @@ service_status() {
 }
 
 clean_artifacts() {
-  if [[ -d "${BUILD_DIR}" ]]; then
-    find "${BUILD_DIR}" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
-  fi
+    if [[ -d "${BUILD_DIR}" ]]
+    then
+        find "${BUILD_DIR}" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+    fi
+}
+
+# Вывод значений глобальных переменных
+echo_vars() {
+    echo "Environment_variables_values:"
+    echo "  PROJECT_ROOT:${PROJECT_ROOT}"
+    echo "  SH_DIR      :${SH_DIR}"
+    echo "  BUILD_DIR   :${BUILD_DIR}"
+    echo "  BIN_DIR     :${BIN_DIR}"
+    
+    echo "  SERVICE_NAME:${SERVICE_NAME}"
+    echo "  SERVICE_USER:${SERVICE_USER}"
+    echo "  SESSION_NAME:${SESSION_NAME}"
+    echo "  TMUX_SCRIPT :${TMUX_SCRIPT}"
+    
+    echo "  MODE        :${MODE}"
+}
+
+echo_start() {
+    echo "${BASH_SOURCE[0]} START ..."
+}
+
+echo_done() {
+    echo "${BASH_SOURCE[0]} DONE"
 }
 
 ##################################################
-#### Разбор аргументов
+#### Установка глобальных переменных
 
-echo "PROJECT_ROOT=${PROJECT_ROOT}"
-echo "SH_DIR=${SH_DIR}"
+echo_start
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SH_DIR="${PROJECT_ROOT}/src/web/sh"
 BUILD_DIR="${SH_DIR}/build"
 BIN_DIR="${BIN_DIR:-/usr/local/bin}"
 
+SERVICE_NAME="${SERVICE_NAME:-vsegost-web}"
+SERVICE_USER="${SERVICE_USER:-${USER}}"
+SESSION_NAME="${SESSION_NAME:-vsegost-web}"
+
+TMUX_SCRIPT="${BIN_DIR}/vsegost-web-tmux.sh"
+
+MODE="${1:---help}"
+
+##################################################
+#### Разбор аргументов
 
 SYSTEM="$(detect_system)"
 
@@ -164,40 +206,36 @@ else  SUDO="sudo"
 fi
 
 case "${MODE}" in
-  -h|--help|help)
-    usage
-    exit 0
-    ;;
-  build)
-    build_artifacts
-    ;;
-  install)
-    install_artifacts
-    ;;
-  uninstall)
-    uninstall_artifacts
-    ;;
-  clean)
-    clean_artifacts
-    ;;
-  service-install)
-    service_install
-    ;;
-  service-status)
-    service_status
-    ;;
-  service-uninstall)
-    service_uninstall
-    ;;
-  *)
-    echo "Unknown mode: ${MODE}" >&2
-    usage
+    -h|--help|help)
+        usage
+        exit 0
+        ;;
+    build)
+        build_artifacts
+        ;;
+    install)
+        install_artifacts
+        ;;
+    uninstall)
+        uninstall_artifacts
+        ;;
+    clean)
+        clean_artifacts
+        ;;
+    service-install)
+        service_install
+        ;;
+    service-status)
+        service_status
+        ;;
+    service-uninstall)
+        service_uninstall
+        ;;
+    *)
+        echo "Unknown mode: ${MODE}" >&2
+        usage
     exit 1
     ;;
 esac
-
-echo "Done: mode=${MODE}, build=${BUILD_DIR}, bin=${BIN_DIR}"
-
-echo "##################################################"
-echo "${BASH_SOURCE[0]} DONE"
-echo "##################################################"
+echo_vars
+echo_done
