@@ -10,8 +10,9 @@
 #+end_src
 
 ** Создаем базу данных
-#+begin_src shell
-  initdb --locale=ru_RU.UTF-8 --encoding=UTF8 -D /var/lib/postgres/data --data-checksums
+#+begin_src cmd
+  chcp 1251
+  "D:\home\_namatv\PRG\msys64\ucrt64\bin\initdb" --locale=ru_RU.UTF-8 --encoding=UTF8 -D "D:\home\_namatv\PRG\msys64\var\lib\postgres\data" --data-checksums
 #+end_src
 
 Готово. Теперь вы можете запустить сервер баз данных:
