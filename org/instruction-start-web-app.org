@@ -1,12 +1,5 @@
-* Сборка выполняемого файла, запускающего веб-сервер
-#+begin_src lisp
-  (asdf:load-system "vsegost/web")
-
-  (sb-ext:save-lisp-and-die "vsegost-web.exe"
-                            :executable t
-                            :compression t)
-#+end_src
-
-#+begin_src sh
-  vsegost-web.exe --eval "(vse-gost/web:start-gosts)"
+* Запуск web-приложения vsegost-web
+#+caption: Запуск systemd-сервиса vsegost-web
+#+begin_src shell
+  sudo systemctld start vsegost-web
 #+end_src

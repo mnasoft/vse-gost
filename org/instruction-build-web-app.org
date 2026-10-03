@@ -1,9 +1,18 @@
-* Сборка выполняемого файла, запускающего веб-сервер
-1. Запустите sbcl в консоли
-2. Выполните код в SBCL
-   #+begin_src sh :results none
-     mkdir -p ../src/web/build 
-     cd ../src/web/build 
-     sh ../sh/build.sh
-   #+end_src
+* Установка *vse-gost/web* под Linux
+Сборка, установка и создание севиса осуществляется при помощи скрипта
+[[file:~/quicklisp/local-projects/clisp/vse-gost/INSTALL.sh][=INSTALL.sh=]].
+
+Скрипт [[file:~/quicklisp/local-projects/clisp/vse-gost/INSTALL.sh][=INSTALL.sh=]] необходимо запускать из консоли из каталога, в
+котором раслолагается шрифт.
+
+Рекомендуемый метод сборки и установки приведен в следующем [[Рекомендуемый метод сборки и установки][разделе]].
+
+** Рекомендуемый метод сборки и установки
+#+caption: Сборка, установка и создание systemd-сервиса
+#+begin_src shell
+  ./INSTALL.sh build
+  ./INSTALL.sh install
+  ./INSTALL.sh service-install  
+#+end_src
+
 

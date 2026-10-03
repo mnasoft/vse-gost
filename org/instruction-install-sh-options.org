@@ -1,0 +1,60 @@
+* Опции скрипта INSTALL.sh
+Команду INSTALL.sh следует выполнять из консоли из каталога, в котором
+она расположена.
+
+** Вывод справочной информации
+#+caption: Вывод справочной информации
+#+begin_src shell
+  ./INSTALL.sh
+#+end_src
+
+** Cборка standalone бинарного файла
+#+caption: Cборка standalone бинарного файла
+#+begin_src shell
+  ./INSTALL.sh build
+#+end_src
+
+Артефакты (результаты) сборки появляются в каталоге
+[[file:~/quicklisp/local-projects/clisp/vse-gost/src/web/sh/build/][../src/web/sh/build]].
+
+** Очистка артефактов (результатов) сборки
+#+caption: Очистка артефактов (результатов) сборки
+#+begin_src shell
+  ./INSTALL.sh clean
+#+end_src
+
+#+caption: Только установка
+#+begin_src shell
+  ./INSTALL.sh install
+#+end_src
+
+Будут установлены команды в =/usr/local/bin=:
+- =vsegost-web.exe=       (standalone бинарник)
+- =vsegost-web.sh=        (обертка запуска)
+- =vsegost-web-tmux.sh=   (запуск в tmux)
+- =vsegost-web-mk-service.sh= (генерация/установка systemd unit)
+
+** Удаление standalone из /usr/local/bin
+#+caption: Удаление standalone из /usr/local/bin
+#+begin_src shell
+  ./INSTALL.sh uninstall
+#+end_src
+
+** Установка systemd-сервиса
+#+caption: Установка systemd-сервиса
+#+begin_src shell
+  ./INSTALL.sh service-install
+#+end_src
+
+** Получение статуса systemd-сервиса
+#+caption: Получение статуса systemd-сервиса
+#+begin_src shell
+  ./INSTALL.sh service-status
+#+end_src
+
+** Удаление systemd-сервиса
+#+caption: Удаление systemd-сервиса
+#+begin_src shell
+  ./INSTALL.sh service-uninstall
+#+end_src
+
