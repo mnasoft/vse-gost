@@ -3,7 +3,7 @@
 [[file:~/quicklisp/local-projects/clisp/vse-gost/INSTALL.sh][=INSTALL.sh=]].
 
 Скрипт [[file:~/quicklisp/local-projects/clisp/vse-gost/INSTALL.sh][=INSTALL.sh=]] необходимо запускать из консоли из каталога, в
-котором раслолагается шрифт.
+котором скрипт [[file:~/quicklisp/local-projects/clisp/vse-gost/INSTALL.sh][=INSTALL.sh=]] раслолагается.
 
 Рекомендуемый метод сборки и установки приведен в следующем [[Рекомендуемый метод сборки и установки][разделе]].
 
